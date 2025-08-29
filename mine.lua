@@ -60,7 +60,8 @@ function Mine:tick()
         return
     end
 
-    for _, v in ipairs(self.Steps) do
+    for k, v in ipairs(self.Steps) do
+        print(string.format("Step %d/%d: Moving to {x: %d, y: %d, z: %d}", k, #self.Steps, v.x, v.y, v.z))
         MoveHelper:moveTo(v)
     end
 
