@@ -21,6 +21,7 @@ RefuelHelper.coalList = {
 ---@return nil
 function RefuelHelper:refuel()
     local fuelLevel = turtle.getFuelLevel()
+    print("Current fuel level: " .. fuelLevel)
     if fuelLevel == "unlimited" or (fuelLevel > 100 and self.currentStatus == self.status.idle) then return end
 
     if self.currentStatus == self.status.idle then
