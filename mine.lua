@@ -119,8 +119,8 @@ end
 ---@param vec3 Vec3 local pos
 ---@return boolean
 function Mine:moveTo(vec3)
-    if vec3:isNilOrZero() then
-        print("Invalid coordinates")
+    if vec3:isNil() then
+        error("Invalid coordinates: " .. vec3, 2)
         return false
     end
 
