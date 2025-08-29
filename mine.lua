@@ -35,12 +35,38 @@ function Mine:refuel()
     end
 end
 
+function Mine:generateSphere(radius)
+    local points = {}
+    local rSquared = radius * radius
+
+    for x = -radius, radius do
+        for y = -radius, radius do
+            for z = -radius, radius do
+                if x * x + y * y + z * z <= rSquared then
+                    table.insert(points, Vec3(x, y, z))
+                end
+            end
+        end
+    end
+
+    table.sort(points, function(a, b)
+        return (a.x * a.x + a.y * a.y + a.z * a.z) < (b.x * b.x + b.y * b.y + b.z * b.z)
+    end)
+
+    return points
+end
+
 local testStep = 0
+local initDirection = MoveHelper.directions.north
 
 function Mine:tick()
     self:refuel()
 
     if testStep > 1 then
+        if MoveHelper.direction ~= initDirection then
+            MoveHelper:turnTo(initDirection)
+            return
+        end
         return
     elseif testStep > 0 then
         if MoveHelper:moveTo(self.initPos) then
@@ -54,6 +80,7 @@ end
 
 function Mine:init()
     print("Starting mining turtle...")
+    initDirection = MoveHelper.direction
     while true do
         self:tick()
         sleep(0)
