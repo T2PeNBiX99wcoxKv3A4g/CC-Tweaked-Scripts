@@ -10,8 +10,8 @@ Mine.initDirection = MoveHelper.directions.north
 Mine.Steps = {}
 ---@type number
 Mine.currentStep = 1
----@type number
-Mine.done = 0
+---@type boolean
+Mine.done = false
 
 ---@param size number
 ---@param y number
@@ -54,14 +54,6 @@ function Mine:mine3DAreaPath(size, height)
 end
 
 function Mine:tick()
-    if self.done > 0 and self.done < 1 then
-        print("Mining test complete!")
-        self.done = 2
-        return
-    end
-
-    print("Done: " .. self.done)
-
     for k, v in ipairs(self.Steps) do
         print(string.format("Step %d/%d: Moving to {x: %d, y: %d, z: %d}", k, #self.Steps, v.x, v.y, v.z))
         MoveHelper:moveTo(v)
@@ -71,7 +63,7 @@ function Mine:tick()
 
     MoveHelper:moveTo(self.initPos)
     MoveHelper:turnTo(self.initDirection)
-    self.done = 1
+    self.done = true
 end
 
 function Mine:init()
@@ -94,6 +86,7 @@ function Mine:init()
     print(string.format("Starting mining a cube of size %d and height %d", size, height))
 
     while true do
+        if self.done then break end
         self:tick()
         sleep(0)
     end
