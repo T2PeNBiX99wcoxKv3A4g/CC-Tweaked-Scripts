@@ -15,6 +15,18 @@ MoveHelper.directions = {
     west = 3
 }
 
+--- For easy iteration
+---@type string[]
+MoveHelper.directionsArray = { "north", "east", "south", "west" }
+
+---@enum MoveHelper.turns
+MoveHelper.turns = {
+    none = 0,
+    left = 1,
+    right = 2,
+    around = 3
+}
+
 ---      0
 ---3   M   1
 ---      2
@@ -27,6 +39,58 @@ end
 function MoveHelper:turnRight()
     turtle.turnRight()
     self.direction = (self.direction + 1) % 4
+end
+
+function MoveHelper:turnAround()
+    turtle.turnLeft()
+    turtle.turnLeft()
+    self.direction = (self.direction + 2) % 4
+end
+
+---@param dir MoveHelper.directions
+---@return MoveHelper.turns
+function MoveHelper:getQuickTurn(dir)
+    if dir < 0 or dir > 3 then
+        error("Invalid direction: " .. dir, 2)
+        return MoveHelper.turns.none
+    end
+
+    local diff = (dir - self.direction) % 4
+    if diff == 0 then
+        return MoveHelper.turns.none
+    elseif diff == 1 then
+        return MoveHelper.turns.right
+    elseif diff == 2 then
+        return MoveHelper.turns.around
+    elseif diff == 3 then
+        return MoveHelper.turns.left
+    end
+    return MoveHelper.turns.none
+end
+
+---@param dir MoveHelper.directions
+function MoveHelper:turnTo(dir)
+    if dir < 0 or dir > 3 then
+        error("Invalid direction: " .. dir, 2)
+        return
+    end
+
+    local turn = self:getQuickTurn(dir)
+    if turn == MoveHelper.turns.left then
+        self:turnLeft()
+    elseif turn == MoveHelper.turns.right then
+        self:turnRight()
+    elseif turn == MoveHelper.turns.around then
+        self:turnAround()
+    end
+end
+
+---@return string
+function MoveHelper:getDirectionName()
+    if MoveHelper.directionsArray[self.direction] then
+        return MoveHelper.directionsArray[self.direction]
+    end
+    return "unknown"
 end
 
 ---@return boolean
@@ -109,25 +173,25 @@ function MoveHelper:moveTo(vec3)
     while self.position.x ~= vec3.x or self.position.z ~= vec3.z do
         if self.position.x < vec3.x then
             while self.direction ~= self.directions.east do
-                self:turnRight()
+                self:turnTo(self.directions.east)
                 sleep(0)
             end
             self:forward()
         elseif self.position.x > vec3.x then
             while self.direction ~= self.directions.west do
-                self:turnRight()
+                self:turnTo(self.directions.west)
                 sleep(0)
             end
             self:forward()
         elseif self.position.z < vec3.z then
             while self.direction ~= self.directions.north do
-                self:turnRight()
+                self:turnTo(self.directions.north)
                 sleep(0)
             end
             self:forward()
         elseif self.position.z > vec3.z then
             while self.direction ~= self.directions.south do
-                self:turnRight()
+                self:turnTo(self.directions.south)
                 sleep(0)
             end
             self:forward()
