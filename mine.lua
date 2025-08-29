@@ -49,15 +49,23 @@ function Mine:tick()
 end
 
 function Mine:init()
-    print("Starting mining turtle...")
-
     self.initPos = MoveHelper.position
     self.initDirection = MoveHelper.direction
 
-    local size = tonumber(read("Enter the size of the cube to mine (default 5): ")) or 5
-    local height = tonumber(read("Enter the height of the cube to mine (default 11): ")) or 11
+    term.clear()
+    print("Enter the size of the cube to mine (default 5): ")
+    write("> ")
+    local size = tonumber(read()) or 5
+
+    term.clear()
+    print("Enter the height of the cube to mine (default 11): ")
+    write("> ")
+    local height = tonumber(read()) or 11
 
     self.Steps = self:generateHighCube(size, height)
+
+    term.clear()
+    print("Starting mining turtle...")
 
     while true do
         self:tick()
