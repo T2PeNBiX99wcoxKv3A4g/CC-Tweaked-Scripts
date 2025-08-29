@@ -80,7 +80,7 @@ function Mine:init()
     write("> ")
     local height = tonumber(read()) or 11
 
-    self.Steps = self:mine2DAreaPath(size, -1)
+    self.Steps = self:mine3DAreaPath(size, height)
 
     term.clear()
     print(string.format("Starting mining a cube of size %d and height %d", size, height))
