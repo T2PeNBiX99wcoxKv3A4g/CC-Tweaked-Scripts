@@ -1,62 +1,62 @@
 local Door = {}
 
 ---@type number
-Door.SleepTime = 10
+Door.sleepTime = 10
 ---@type string
-Door.DoorSide = "left"
+Door.doorSide = "left"
 ---@type string
-Door.Password = "2"
+Door.password = "2"
 ---@type string
-Door.InputHint = "1 + 1 = ?"
+Door.inputHint = "1 + 1 = ?"
 ---@type string
-Door.InputPrefix = "Answer > "
+Door.inputPrefix = "Answer > "
 ---@type string
-Door.LogPassMsg = "Pass!"
+Door.logPassMsg = "Pass!"
 ---@type string
-Door.LogFailedMsg = "Failed!"
+Door.logFailedMsg = "Failed!"
 ---@type string
-Door.LogDoorOpenMsg = "Door will open in " .. Door.SleepTime .. " seconds"
+Door.logDoorOpenMsg = "Door will open in " .. Door.sleepTime .. " seconds"
 ---@type string
-Door.LogRetryMsg = "Retry after " .. Door.SleepTime .. " seconds"
+Door.logRetryMsg = "Retry after " .. Door.sleepTime .. " seconds"
 
 ---@return nil
-function Door:Init()
+function Door:init()
     while true do
-        Door:InputPassword()
+        Door:inputPassword()
     end
 end
 
 ---@return nil
-function Door:InputPassword()
-    print(self.InputHint)
-    write(self.InputPrefix)
+function Door:inputPassword()
+    print(self.inputHint)
+    write(self.inputPrefix)
 
-    if self:CheckPassword() then
-        self:Pass()
+    if self:checkPassword() then
+        self:pass()
         return
     end
-    self:Failed()
+    self:failed()
 end
 
 ---@return boolean
-function Door:CheckPassword()
-    return read("*") == self.Password
+function Door:checkPassword()
+    return read("*") == self.password
 end
 
 ---@return nil
-function Door:Pass()
-    print(self.LogPassMsg)
-    print(self.LogDoorOpenMsg)
-    redstone.setOutput(self.DoorSide, true)
-    sleep(self.SleepTime)
-    redstone.setOutput(self.DoorSide, false)
+function Door:pass()
+    print(self.logPassMsg)
+    print(self.logDoorOpenMsg)
+    redstone.setOutput(self.doorSide, true)
+    sleep(self.sleepTime)
+    redstone.setOutput(self.doorSide, false)
 end
 
 ---@return nil
-function Door:Failed()
-    print(self.LogFailedMsg)
-    print(self.LogRetryMsg)
-    sleep(self.SleepTime)
+function Door:failed()
+    print(self.logFailedMsg)
+    print(self.logRetryMsg)
+    sleep(self.sleepTime)
 end
 
-Door:Init()
+Door:init()
