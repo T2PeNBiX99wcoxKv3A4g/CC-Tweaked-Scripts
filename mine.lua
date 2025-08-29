@@ -51,12 +51,12 @@ function Mine:refuel()
     end
 end
 
-function Mine:left()
+function Mine:turnLeft()
     turtle.turnLeft()
     self.direction = (self.direction - 1) % 4
 end
 
-function Mine:right()
+function Mine:turnRight()
     turtle.turnRight()
     self.direction = (self.direction + 1) % 4
 end
@@ -141,25 +141,25 @@ function Mine:moveTo(vec3)
     while self.position.x ~= vec3.x or self.position.z ~= vec3.z do
         if self.position.x < vec3.x then
             while self.direction ~= self.directions.east do
-                self:right()
+                self:turnRight()
                 sleep(0)
             end
             self:forward()
         elseif self.position.x > vec3.x then
             while self.direction ~= self.directions.west do
-                self:right()
+                self:turnRight()
                 sleep(0)
             end
             self:forward()
         elseif self.position.z < vec3.z then
             while self.direction ~= self.directions.north do
-                self:right()
+                self:turnRight()
                 sleep(0)
             end
             self:forward()
         elseif self.position.z > vec3.z then
             while self.direction ~= self.directions.south do
-                self:right()
+                self:turnRight()
                 sleep(0)
             end
             self:forward()
