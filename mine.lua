@@ -14,30 +14,41 @@ Mine.currentStep = 1
 Mine.done = 0
 
 ---@param size number
----@param height number
+---@param y number
 ---@return Vec3[]
-function Mine:generateHighCube(size, height)
+function Mine:mine2DAreaPath(size, y)
     local points = {}
-    local halfSize = math.floor(size / 2)
-    local halfHeight = math.floor(height / 2)
+    local sizeEnd = size - 1
 
-    for x = -halfSize - 2, 0 do
-        for y = -halfHeight * 2 + 1, -1 do
-            for z = 0, halfSize * 2 do
-                table.insert(points, Vec3(x, y, z))
-            end
+    for x = -sizeEnd, 0 do
+        for z = 0, sizeEnd do
+            table.insert(points, Vec3(x, y, z))
         end
     end
 
     table.sort(points, function(a, b)
-        if a.y == b.y then
-            if a.x == b.x then
-                return a.z < b.z
-            end
-            return a.x > b.x
+        if a.x == b.x then
+            return a.z < b.z
         end
-        return a.y > b.y
+        return a.x > b.x
     end)
+
+    return points
+end
+
+---@param size number
+---@param height number
+---@return Vec3[]
+function Mine:mine3DAreaPath(size, height)
+    local points = {}
+    local newHeight = height + 1
+
+    for y = -1, -newHeight, -1 do
+        local layerPoints = self:mine2DAreaPath(y, size)
+        for _, v in ipairs(layerPoints) do
+            table.insert(points, v)
+        end
+    end
 
     return points
 end
@@ -74,7 +85,7 @@ function Mine:init()
     write("> ")
     local height = tonumber(read()) or 11
 
-    self.Steps = self:generateHighCube(size, height)
+    self.Steps = self:mine3DAreaPath(size, height)
 
     term.clear()
     print(string.format("Starting mining a cube of size %d and height %d", size, height))
