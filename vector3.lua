@@ -1,0 +1,265 @@
+---@class Vec3
+local Vec3 = {}
+
+---@type number
+Vec3.x = 0
+---@type number
+Vec3.y = 0
+---@type number
+Vec3.z = 0
+
+local metaTable = {}
+
+function metaTable:__call(x, y, z)
+    local obj = { x = x or 0, y = y or 0, z = z or 0 }
+    local objMetaTable = { __index = Vec3 }
+
+    function objMetaTable:__newindex(key, value)
+        if (key == "x" or key == "y" or key == "z") and type(value) == "number" then
+            rawset(self, key, value)
+            return
+        end
+        error("Attempt to modify read-only table", 2)
+    end
+
+    setmetatable(obj, objMetaTable)
+    return obj
+end
+
+function metaTable:__tostring()
+    return "Vec3(" .. self.x .. ", " .. self.y .. ", " .. self.z .. ")"
+end
+
+---@param other Vec3
+function metaTable:__add(other)
+    return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
+end
+
+---@param other Vec3
+function metaTable:__sub(other)
+    return Vec3(self.x - other.x, self.y - other.y, self.z - other.z)
+end
+
+function metaTable:__newindex(key, value)
+    error("Attempt to modify read-only table", 2)
+end
+
+function metaTable:__concat(other)
+    return tostring(self) .. tostring(other)
+end
+
+setmetatable(Vec3, metaTable)
+
+---@return Vec3
+function Vec3:copy()
+    return Vec3(self.x, self.y, self.z)
+end
+
+---@param other Vec3
+---@return boolean
+function Vec3:equals(other)
+    return self.x == other.x and self.y == other.y and self.z == other.z
+end
+
+---@param other Vec3
+---@return Vec3
+function Vec3:add(other)
+    return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
+end
+
+---@param other Vec3
+function Vec3:addInPlace(other)
+    self.x = self.x + other.x
+    self.y = self.y + other.y
+    self.z = self.z + other.z
+end
+
+---@param x number
+---@return Vec3
+function Vec3:addX(x)
+    return Vec3(self.x + x, self.y, self.z)
+end
+
+---@param y number
+---@return Vec3
+function Vec3:addY(y)
+    return Vec3(self.x, self.y + y, self.z)
+end
+
+---@param z number
+---@return Vec3
+function Vec3:addZ(z)
+    return Vec3(self.x, self.y, self.z + z)
+end
+
+---@param x number
+function Vec3:addXInPlace(x)
+    self.x = self.x + x
+end
+
+---@param y number
+function Vec3:addYInPlace(y)
+    self.y = self.y + y
+end
+
+---@param z number
+function Vec3:addZInPlace(z)
+    self.z = self.z + z
+end
+
+---@return Vec3
+function Vec3:zero()
+    return Vec3(0, 0, 0)
+end
+
+---@return Vec3
+function Vec3:invert()
+    return Vec3(1 / self.x, 1 / self.y, 1 / self.z)
+end
+
+---@return Vec3
+function Vec3:abs()
+    return Vec3(math.abs(self.x), math.abs(self.y), math.abs(self.z))
+end
+
+---@return Vec3
+function Vec3:ceil()
+    return Vec3(math.ceil(self.x), math.ceil(self.y), math.ceil(self.z))
+end
+
+---@return Vec3
+function Vec3:round()
+    return Vec3(math.floor(self.x + 0.5), math.floor(self.y + 0.5), math.floor(self.z + 0.5))
+end
+
+---@return Vec3
+function Vec3:floor()
+    return Vec3(math.floor(self.x), math.floor(self.y), math.floor(self.z))
+end
+
+---@return Vec3
+function Vec3:negate()
+    return Vec3(-self.x, -self.y, -self.z)
+end
+
+---@param other Vec3
+---@return number
+function Vec3:dot(other)
+    return self.x * other.x + self.y * other.y + self.z * other.z
+end
+
+---@param other Vec3
+---@return Vec3
+function Vec3:cross(other)
+    return Vec3(
+        self.y * other.z - self.z * other.y,
+        self.z * other.x - self.x * other.z,
+        self.x * other.y - self.y * other.x
+    )
+end
+
+---@param scalar number
+---@return Vec3
+function Vec3:scale(scalar)
+    return Vec3(self.x * scalar, self.y * scalar, self.z * scalar)
+end
+
+---@param other Vec3
+---@return Vec3
+function Vec3:subtract(other)
+    return Vec3(self.x - other.x, self.y - other.y, self.z - other.z)
+end
+
+---@param other Vec3
+function Vec3:subtractInPlace(other)
+    self.x = self.x - other.x
+    self.y = self.y - other.y
+    self.z = self.z - other.z
+end
+
+---@param x number
+---@return Vec3
+function Vec3:subtractX(x)
+    return Vec3(self.x - x, self.y, self.z)
+end
+
+---@param y number
+---@return Vec3
+function Vec3:subtractY(y)
+    return Vec3(self.x, self.y - y, self.z)
+end
+
+---@param z number
+---@return Vec3
+function Vec3:subtractZ(z)
+    return Vec3(self.x, self.y, self.z - z)
+end
+
+---@param x number
+function Vec3:subtractXInPlace(x)
+    self.x = self.x - x
+end
+
+---@param y number
+function Vec3:subtractYInPlace(y)
+    self.y = self.y - y
+end
+
+---@param z number
+function Vec3:subtractZInPlace(z)
+    self.z = self.z - z
+end
+
+-- Aliases
+Vec3.sub = Vec3.subtract
+Vec3.subInPlace = Vec3.subtractInPlace
+Vec3.subX = Vec3.subtractX
+Vec3.subY = Vec3.subtractY
+Vec3.subZ = Vec3.subtractZ
+Vec3.subXInPlace = Vec3.subtractXInPlace
+Vec3.subYInPlace = Vec3.subtractYInPlace
+Vec3.subZInPlace = Vec3.subtractZInPlace
+
+---@return Vec3
+function Vec3:normalize()
+    local len = self:length()
+    if len == 0 then return Vec3:zero() end
+    return Vec3(self.x / len, self.y / len, self.z / len)
+end
+
+---@return number
+function Vec3:length()
+    return math.sqrt(self.x * self.x + self.y * self.y + self.z * self.z)
+end
+
+---@param other Vec3
+---@return number
+function Vec3:distanceTo(other)
+    local dx = self.x - other.x
+    local dy = self.y - other.y
+    local dz = self.z - other.z
+    return math.sqrt(dx * dx + dy * dy + dz * dz)
+end
+
+---@param other Vec3
+---@return number
+function Vec3:manhattanDistanceTo(other)
+    return math.abs(self.x - other.x) + math.abs(self.y - other.y) + math.abs(self.z - other.z)
+end
+
+---@return boolean
+function Vec3:isZero()
+    return self.x == 0 and self.y == 0 and self.z == 0
+end
+
+---@return boolean
+function Vec3:isNil()
+    return self.x == nil and self.y == nil and self.z == nil
+end
+
+---@return boolean
+function Vec3:isNilOrZero()
+    return self:isNil() or self:isZero()
+end
+
+return Vec3
