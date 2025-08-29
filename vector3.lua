@@ -19,7 +19,7 @@ function metaTable:__call(x, y, z)
             rawset(self, key, value)
             return
         end
-        error("Attempt to modify read-only table", 2)
+        error("Trying to add invalid value to Vec3", 2)
     end
 
     setmetatable(obj, objMetaTable)
