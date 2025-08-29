@@ -8,48 +8,6 @@ Vec3.y = 0
 ---@type number
 Vec3.z = 0
 
-local metaTable = {}
-
-function metaTable:__call(x, y, z)
-    local obj = { x = x or 0, y = y or 0, z = z or 0 }
-    local objMetaTable = { __index = Vec3 }
-
-    function objMetaTable:__newindex(key, value)
-        if (key == "x" or key == "y" or key == "z") and type(value) == "number" then
-            rawset(self, key, value)
-            return
-        end
-        error("Trying to add invalid value to Vec3", 2)
-    end
-
-    setmetatable(obj, objMetaTable)
-    return obj
-end
-
-function metaTable:__tostring()
-    return "Vec3(" .. self.x .. ", " .. self.y .. ", " .. self.z .. ")"
-end
-
----@param other Vec3
-function metaTable:__add(other)
-    return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
-end
-
----@param other Vec3
-function metaTable:__sub(other)
-    return Vec3(self.x - other.x, self.y - other.y, self.z - other.z)
-end
-
-function metaTable:__newindex(key, value)
-    error("Attempt to modify read-only table", 2)
-end
-
-function metaTable:__concat(other)
-    return tostring(self) .. tostring(other)
-end
-
-setmetatable(Vec3, metaTable)
-
 ---@return Vec3
 function Vec3:copy()
     return Vec3(self.x, self.y, self.z)
@@ -261,5 +219,47 @@ end
 function Vec3:isNilOrZero()
     return self:isNil() or self:isZero()
 end
+
+local metaTable = {}
+
+function metaTable:__call(x, y, z)
+    local obj = { x = x or 0, y = y or 0, z = z or 0 }
+    local objMetaTable = { __index = Vec3 }
+
+    function objMetaTable:__newindex(key, value)
+        if (key == "x" or key == "y" or key == "z") and type(value) == "number" then
+            rawset(self, key, value)
+            return
+        end
+        error("Trying to add invalid value to Vec3", 2)
+    end
+
+    setmetatable(obj, objMetaTable)
+    return obj
+end
+
+function metaTable:__tostring()
+    return "Vec3(" .. self.x .. ", " .. self.y .. ", " .. self.z .. ")"
+end
+
+---@param other Vec3
+function metaTable:__add(other)
+    return Vec3(self.x + other.x, self.y + other.y, self.z + other.z)
+end
+
+---@param other Vec3
+function metaTable:__sub(other)
+    return Vec3(self.x - other.x, self.y - other.y, self.z - other.z)
+end
+
+function metaTable:__newindex(key, value)
+    error("Attempt to modify read-only table", 2)
+end
+
+function metaTable:__concat(other)
+    return tostring(self) .. tostring(other)
+end
+
+setmetatable(Vec3, metaTable)
 
 return Vec3
