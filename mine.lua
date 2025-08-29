@@ -20,7 +20,7 @@ function Mine:mine2DAreaPath(size, y)
     local points = {}
     local sizeEnd = size - 1
 
-    for x = -sizeEnd, 0 do
+    for x = 0, -sizeEnd, -1 do
         for z = 0, sizeEnd do
             table.insert(points, Vec3(x, y, z))
         end
