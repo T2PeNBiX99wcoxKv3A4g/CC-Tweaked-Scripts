@@ -64,8 +64,6 @@ function Mine:tick()
         MoveHelper:moveTo(v)
     end
 
-    print("done: " .. self.done)
-
     MoveHelper:moveTo(self.initPos)
     MoveHelper:turnTo(self.initDirection)
     self.done = 1
@@ -85,7 +83,7 @@ function Mine:init()
     write("> ")
     local height = tonumber(read()) or 11
 
-    self.Steps = self:mine3DAreaPath(size, height)
+    self.Steps = self:mine2DAreaPath(size, -1)
 
     term.clear()
     print(string.format("Starting mining a cube of size %d and height %d", size, height))
