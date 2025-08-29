@@ -41,10 +41,9 @@ end
 ---@return Vec3[]
 function Mine:mine3DAreaPath(size, height)
     local points = {}
-    local newHeight = height + 1
 
-    for y = -1, -newHeight, -1 do
-        local layerPoints = self:mine2DAreaPath(y, size)
+    for y = -1, -height, -1 do
+        local layerPoints = self:mine2DAreaPath(size, y)
         for _, v in ipairs(layerPoints) do
             table.insert(points, v)
         end
