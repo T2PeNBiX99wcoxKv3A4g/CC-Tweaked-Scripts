@@ -82,9 +82,9 @@ function Mine:generateHighCube(size, height)
     local halfSize = math.floor(size / 2)
     local halfHeight = math.floor(height / 2)
 
-    for x = -halfSize, halfSize do
-        for y = -halfHeight, halfHeight do
-            for z = -halfSize, halfSize do
+    for x = -halfSize - 2, 0 do
+        for y = -halfHeight * 2, 0 do
+            for z = 0, halfSize * 2 do
                 table.insert(points, Vec3(x, y, z))
             end
         end
