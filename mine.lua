@@ -29,6 +29,16 @@ function Mine:generateHighCube(size, height)
         end
     end
 
+    table.sort(points, function(a, b)
+        if a.y == b.y then
+            if a.x == b.x then
+                return a.z < b.z
+            end
+            return a.x > b.x
+        end
+        return a.y > b.y
+    end)
+
     return points
 end
 
@@ -42,6 +52,8 @@ function Mine:tick()
     for _, v in ipairs(self.Steps) do
         MoveHelper:moveTo(v)
     end
+
+    print("done: " .. self.done)
 
     MoveHelper:moveTo(self.initPos)
     MoveHelper:turnTo(self.initDirection)
@@ -65,7 +77,7 @@ function Mine:init()
     self.Steps = self:generateHighCube(size, height)
 
     term.clear()
-    print("Starting mining turtle...")
+    print(string.format("Starting mining a cube of size %d and height %d", size, height))
 
     while true do
         self:tick()

@@ -15,9 +15,9 @@ Door.logPassMsg = "Pass!"
 ---@type string
 Door.logFailedMsg = "Failed!"
 ---@type string
-Door.logDoorOpenMsg = "Door will open in " .. Door.sleepTime .. " seconds"
+Door.logDoorOpenMsg = string.format("Door will open in %d seconds", Door.sleepTime)
 ---@type string
-Door.logRetryMsg = "Retry after " .. Door.sleepTime .. " seconds"
+Door.logRetryMsg = string.format("Retry after %d seconds", Door.sleepTime)
 
 ---@return nil
 function Door:init()

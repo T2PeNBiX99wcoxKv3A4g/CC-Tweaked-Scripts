@@ -239,7 +239,7 @@ function metaTable:__call(x, y, z)
 end
 
 function metaTable:__tostring()
-    return "Vec3(" .. self.x .. ", " .. self.y .. ", " .. self.z .. ")"
+    return string.format("Vec3(%s, %s, %s)", self.x, self.y, self.z)
 end
 
 ---@param other Vec3
