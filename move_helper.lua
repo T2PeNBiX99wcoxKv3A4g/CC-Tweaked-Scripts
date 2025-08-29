@@ -1,5 +1,6 @@
 local MoveHelper = {}
 local Vec3 = require("vector3")
+local RefuelHelper = require("refuel_helper")
 
 ---@type Vec3
 MoveHelper.position = Vec3:zero()
@@ -95,6 +96,7 @@ end
 
 ---@return boolean
 function MoveHelper:forward()
+    RefuelHelper:tryRefuel()
     self:dig()
     if turtle.forward() then
         if self.direction == self.directions.north then
@@ -113,6 +115,7 @@ end
 
 ---@return boolean
 function MoveHelper:back()
+    RefuelHelper:tryRefuel()
     if turtle.back() then
         if self.direction == self.directions.north then
             self.position = self.position:addZ(-1)
@@ -130,6 +133,7 @@ end
 
 ---@return boolean
 function MoveHelper:up()
+    RefuelHelper:tryRefuel()
     self:digUp()
     if turtle.up() then
         self.position = self.position:addY(1)
@@ -140,6 +144,7 @@ end
 
 ---@return boolean
 function MoveHelper:down()
+    RefuelHelper:tryRefuel()
     self:digDown()
     if turtle.down() then
         self.position = self.position:addY(-1)

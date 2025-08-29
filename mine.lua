@@ -1,7 +1,6 @@
 local Mine = {}
 local Vec3 = require("vector3")
 local MoveHelper = require("move_helper")
-local RefuelHelper = require("refuel_helper")
 
 ---@type Vec3
 Mine.initPos = Vec3(0, 0, 0)
@@ -29,14 +28,20 @@ end
 
 local testStep = 0
 local initDirection = MoveHelper.directions.north
+local done = false
 
 function Mine:tick()
-    RefuelHelper:refuel()
+    if done then
+        print("Mining test complete!")
+        return
+    end
 
     if testStep > 1 then
         if MoveHelper.direction ~= initDirection then
             MoveHelper:turnTo(initDirection)
             return
+        else
+            done = true
         end
         return
     elseif testStep > 0 then
