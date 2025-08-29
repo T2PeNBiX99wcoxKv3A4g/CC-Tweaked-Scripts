@@ -91,7 +91,7 @@ function Mine:generateHighCube(size, height)
     end
 
     table.sort(points, function(a, b)
-        return math.abs(a.y) < math.abs(b.y)
+        return math.abs(a.x) + math.abs(a.y) + math.abs(a.z) < math.abs(b.x) + math.abs(b.y) + math.abs(b.z)
     end)
 
     return points
