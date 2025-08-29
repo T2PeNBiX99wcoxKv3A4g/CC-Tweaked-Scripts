@@ -60,10 +60,14 @@ function Mine:tick()
         return
     end
 
+    print("Done: " .. self.done)
+
     for k, v in ipairs(self.Steps) do
         print(string.format("Step %d/%d: Moving to {x: %d, y: %d, z: %d}", k, #self.Steps, v.x, v.y, v.z))
         MoveHelper:moveTo(v)
     end
+
+    print("Mining test complete! Returning to start position...")
 
     MoveHelper:moveTo(self.initPos)
     MoveHelper:turnTo(self.initDirection)
