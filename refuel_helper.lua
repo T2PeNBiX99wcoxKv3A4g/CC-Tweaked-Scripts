@@ -14,6 +14,8 @@ RefuelHelper.currentStatus = RefuelHelper.status.idle
 RefuelHelper.coalList = {
     ["minecraft:coal"] = true,
     ["minecraft:coal_block"] = true,
+    ["minecraft:charcoal"] = true,
+    ["minecraft:charcoal_block"] = true,
     ["aether:ambrosium_shard"] = true,
     ["aether:ambrosium_block"] = true
 }
