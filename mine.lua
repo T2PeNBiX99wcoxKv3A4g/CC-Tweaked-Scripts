@@ -130,34 +130,41 @@ function Mine:moveTo(vec3)
 
     while self.position.y < vec3.y do
         self:up()
+        sleep(0)
     end
 
     while self.position.y > vec3.y do
         self:down()
+        sleep(0)
     end
 
     while self.position.x ~= vec3.x or self.position.z ~= vec3.z do
         if self.position.x < vec3.x then
             while self.direction ~= self.directions.east do
                 self:right()
+                sleep(0)
             end
             self:forward()
         elseif self.position.x > vec3.x then
             while self.direction ~= self.directions.west do
                 self:right()
+                sleep(0)
             end
             self:forward()
         elseif self.position.z < vec3.z then
             while self.direction ~= self.directions.north do
                 self:right()
+                sleep(0)
             end
             self:forward()
         elseif self.position.z > vec3.z then
             while self.direction ~= self.directions.south do
                 self:right()
+                sleep(0)
             end
             self:forward()
         end
+        sleep(0)
     end
 
     return true
@@ -205,7 +212,7 @@ function Mine:init()
     print("Starting mining turtle...")
     while true do
         self:tick()
-        sleep(0.01)
+        sleep(0)
     end
 end
 
