@@ -1,4 +1,5 @@
 local RefuelHelper = {}
+local LogHelper = require("log_helper")
 
 ---@enum RefuelHelper.status
 RefuelHelper.status = {
@@ -23,7 +24,7 @@ RefuelHelper.coalList = {
 ---@return nil
 function RefuelHelper:tryRefuel()
     local fuelLevel = turtle.getFuelLevel()
-    print(string.format("Current  fuel level: %s", fuelLevel))
+    LogHelper.fuelLevel(fuelLevel)
     if fuelLevel == "unlimited" or (fuelLevel > 100 and self.currentStatus == self.status.idle) then return end
 
     if self.currentStatus == self.status.idle then
@@ -55,7 +56,7 @@ function RefuelHelper:tryRefuel()
         return
     end
 
-    print("Out of fuel! Please add coal to the turtle.")
+    LogHelper.fuelError("Out of fuel! Please add coal to the turtle.")
     self.currentStatus = RefuelHelper.status.outOfFuel
     while true do
         sleep(10)
