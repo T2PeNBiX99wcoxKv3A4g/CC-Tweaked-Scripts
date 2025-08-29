@@ -2,11 +2,11 @@
 local Vec3 = {}
 
 ---@type number
-Vec3.x = 0
+Vec3.x = nil
 ---@type number
-Vec3.y = 0
+Vec3.y = nil
 ---@type number
-Vec3.z = 0
+Vec3.z = nil
 
 ---@return Vec3
 function Vec3:copy()
