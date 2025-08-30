@@ -220,8 +220,19 @@ function vec3:isNilOrZero()
     return self:isNil() or self:isZero()
 end
 
+---@param vecTable table
+---@return vec3|nil
+function vec3:formTable(vecTable)
+    if not vecTable.x or not vecTable.y or not vecTable.z then return nil end
+    return vec3(vecTable.x, vecTable.y, vecTable.z)
+end
+
 local metaTable = {}
 
+---@param x number
+---@param y number
+---@param z number
+---@return vec3
 function metaTable:__call(x, y, z)
     local obj = { x = x or 0, y = y or 0, z = z or 0 }
     local objMetaTable = { __index = vec3 }

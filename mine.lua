@@ -190,11 +190,18 @@ function mine:load()
 
     self.size = data.size
     self.height = data.height
-    self.initPos = data.initPos
+    self.initPos = vec3:formTable(data.initPos)
     self.initDirection = data.initDirection
-    moveHelper.position = data.position
+    moveHelper.position = vec3:formTable(data.position)
     moveHelper.direction = data.direction
-    self.steps = data.steps
+
+    local newSteps = {}
+
+    for index, value in ipairs(data.steps) do
+        newSteps[index] = vec3:formTable(value)
+    end
+
+    self.steps = newSteps
     self.currentStep = data.currentStep
     self.currentStatus = data.currentStatus
 
