@@ -1,13 +1,6 @@
 ---@class moveHelper
 local moveHelper = {}
 
----@diagnostic disable: lowercase-global
-refuelHelper = refuelHelper or require("refuel_helper")
-hook = hook or require("hook")
----@diagnostic enable: lowercase-global
-
-local vec3 = require("vector3")
-
 ---@type vec3
 moveHelper.position = vec3:zero()
 --- 0 = north, 1 = east, 2 = south, 3 = west

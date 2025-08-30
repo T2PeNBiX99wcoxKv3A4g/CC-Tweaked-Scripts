@@ -1,6 +1,5 @@
 ---@class refuelHelper
 local refuelHelper = {}
-local logHelper = require("log_helper")
 
 ---@enum refuelHelper.status
 refuelHelper.status = {

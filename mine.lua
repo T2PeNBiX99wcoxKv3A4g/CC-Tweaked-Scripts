@@ -1,16 +1,6 @@
 ---@class mine
 local mine = {}
 
----@diagnostic disable: lowercase-global
-moveHelper = moveHelper or require("move_helper")
-refuelHelper = refuelHelper or require("refuel_helper")
-hook = hook or require("hook")
----@diagnostic enable: lowercase-global
-
-local vec3 = require("vector3")
-local logHelper = require("log_helper")
-local saveHelper = require("save_helper")
-
 ---@enum mine.status
 mine.status = {
     idle = 0,
