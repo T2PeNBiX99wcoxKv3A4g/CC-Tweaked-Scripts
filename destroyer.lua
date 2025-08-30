@@ -157,9 +157,9 @@ end
 ---@return boolean
 function destroyer:save()
     local data = {
-        initPos = self.initPos,
+        initPos = self.initPos:copy(),
         initDirection = self.initDirection,
-        position = moveHelper.position,
+        position = moveHelper.position:copy(),
         direction = moveHelper.direction,
         steps = self.steps,
         currentStep = self.currentStep,
@@ -222,7 +222,7 @@ function destroyer:init()
     if self:load() then
         logHelper.massage("Loaded previous state. Resuming mining operation...")
     else
-        self.initPos = moveHelper.position
+        self.initPos = moveHelper.position:copy()
         self.initDirection = moveHelper.direction
 
         local config = self.dataHelper:load()

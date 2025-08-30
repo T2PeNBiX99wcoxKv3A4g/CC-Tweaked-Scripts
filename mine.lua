@@ -167,9 +167,9 @@ function mine:save()
     local data = {
         size = self.size,
         height = self.height,
-        initPos = self.initPos,
+        initPos = self.initPos:copy(),
         initDirection = self.initDirection,
-        position = moveHelper.position,
+        position = moveHelper.position:copy(),
         direction = moveHelper.direction,
         steps = self.steps,
         currentStep = self.currentStep,
@@ -232,7 +232,7 @@ function mine:init()
     if self:load() then
         logHelper.massage("Loaded previous state. Resuming mining operation...")
     else
-        self.initPos = moveHelper.position
+        self.initPos = moveHelper.position:copy()
         self.initDirection = moveHelper.direction
 
         term.clear()
@@ -254,7 +254,7 @@ function mine:init()
         self.currentStatus = self.status.mining
         self.size = size
         self.height = height
-        -- self:save()
+        self:save()
 
         logHelper.massage("Starting new mining operation...")
     end
