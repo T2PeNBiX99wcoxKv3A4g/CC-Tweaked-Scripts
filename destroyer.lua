@@ -19,7 +19,7 @@ destroyer.height = 2
 ---@type number
 destroyer.width = 2
 ---@type string
-destroyer.attackSide = "left"
+destroyer.attackSide = "right"
 ---@type vec3
 destroyer.initPos = vec3(0, 0, 0)
 ---@type moveHelper.directions
