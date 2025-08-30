@@ -66,8 +66,9 @@ end
 ---@return vec3[]
 function destroyer:mine3DAreaPath(size, height, width)
     local points = {}
+    local widthEnd = width - 1
 
-    for x = -1, -width, -1 do
+    for x = 0, -widthEnd, -1 do
         local layerPoints = self:mine2DAreaPath(size, height, x)
         for _, v in ipairs(layerPoints) do
             table.insert(points, v)
