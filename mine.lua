@@ -229,12 +229,13 @@ end
 function mine:init()
     hook:add("moveHelper.onDirectionChanged", self, self.onDirectionChanged)
     hook:add("moveHelper.onPositionChanged", self, self.onPositionChanged)
-    self.initPos = moveHelper.position
-    self.initDirection = moveHelper.direction
 
     if self:load() then
         logHelper.massage("Loaded previous state. Resuming mining operation...")
     else
+        self.initPos = moveHelper.position
+        self.initDirection = moveHelper.direction
+
         term.clear()
         term.setCursorPos(1, 1)
         print("Enter the size of the cube to mine (default 5): ")
