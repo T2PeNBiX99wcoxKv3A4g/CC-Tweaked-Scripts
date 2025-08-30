@@ -169,7 +169,7 @@ function Mine:init()
     self.currentStatus = self.status.mining
 
     while true do
-        if self.currentStatus == self.status.finished then break end
+        if self.currentStatus == self.status.finished or self.currentStatus == self.status.unfinished then break end
         self:tick()
         sleep(0)
     end
