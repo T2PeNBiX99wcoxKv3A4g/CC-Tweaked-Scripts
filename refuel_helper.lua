@@ -39,7 +39,7 @@ function RefuelHelper:tryRefuel()
             while turtle.getItemCount(slot) > 0 do
                 local fuelLevel = turtle.getFuelLevel()
                 turtle.refuel(1)
-                print(string.format("Refueled with %s. Current fuel level: %s", item.name, fuelLevel))
+                LogHelper.fuelMassage(string.format("Refueled with %s. Current fuel level: %s", item.name, fuelLevel))
 
                 if fuelLevel > 1000 then
                     self.currentStatus = RefuelHelper.status.idle

@@ -59,6 +59,15 @@ function LogHelper.fuelLevel(level)
 end
 
 ---@param msg string
+function LogHelper.fuelMassage(msg)
+    term.setCursorPos(1, 5)
+    term.clearLine()
+    term.write(msg)
+    term.setCursorPos(1, 8)
+    term.clearLine()
+end
+
+---@param msg string
 function LogHelper.fuelError(msg)
     term.setCursorPos(1, 5)
     term.clearLine()
