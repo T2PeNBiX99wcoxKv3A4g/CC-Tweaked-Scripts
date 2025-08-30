@@ -1,7 +1,8 @@
-local LogHelper = {}
+---@class logHelper
+local logHelper = {}
 
 ---@param title string
-function LogHelper.title(title)
+function logHelper.title(title)
     term.setCursorPos(1, 1)
     term.clearLine()
     term.write(title)
@@ -10,7 +11,7 @@ function LogHelper.title(title)
 end
 
 ---@param progress string
-function LogHelper.progress(progress)
+function logHelper.progress(progress)
     term.setCursorPos(1, 2)
     term.clearLine()
     term.write(progress)
@@ -19,7 +20,7 @@ function LogHelper.progress(progress)
 end
 
 ---@param msg string
-function LogHelper.massage(msg)
+function logHelper.massage(msg)
     term.setCursorPos(1, 3)
     term.clearLine()
     term.write(msg)
@@ -28,7 +29,7 @@ function LogHelper.massage(msg)
 end
 
 ---@param msg string
-function LogHelper.warning(msg)
+function logHelper.warning(msg)
     term.setCursorPos(1, 3)
     term.clearLine()
     term.setTextColor(colors.yellow)
@@ -39,7 +40,7 @@ function LogHelper.warning(msg)
 end
 
 ---@param msg string
-function LogHelper.error(msg)
+function logHelper.error(msg)
     term.setCursorPos(1, 3)
     term.clearLine()
     term.setTextColor(colors.red)
@@ -50,7 +51,7 @@ function LogHelper.error(msg)
 end
 
 ---@param level number|string
-function LogHelper.fuelLevel(level)
+function logHelper.fuelLevel(level)
     term.setCursorPos(1, 4)
     term.clearLine()
     term.write(string.format("Current fuel level: %s", level))
@@ -59,7 +60,7 @@ function LogHelper.fuelLevel(level)
 end
 
 ---@param msg string
-function LogHelper.fuelMassage(msg)
+function logHelper.fuelMassage(msg)
     term.setCursorPos(1, 5)
     term.clearLine()
     term.write(msg)
@@ -68,7 +69,7 @@ function LogHelper.fuelMassage(msg)
 end
 
 ---@param msg string
-function LogHelper.fuelError(msg)
+function logHelper.fuelError(msg)
     term.setCursorPos(1, 5)
     term.clearLine()
     term.setTextColor(colors.red)
@@ -78,4 +79,4 @@ function LogHelper.fuelError(msg)
     term.clearLine()
 end
 
-return LogHelper
+return logHelper

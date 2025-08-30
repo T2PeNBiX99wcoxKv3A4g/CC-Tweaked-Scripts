@@ -1,15 +1,17 @@
-local MoveHelper = {}
-local Vec3 = require("vector3")
-local RefuelHelper = require("refuel_helper")
+---@class moveHelper
+local moveHelper = {}
+local vec3 = require("vector3")
+local refuelHelper = require("refuel_helper")
+local hook = require("hook")
 
----@type Vec3
-MoveHelper.position = Vec3:zero()
+---@type vec3
+moveHelper.position = vec3:zero()
 --- 0 = north, 1 = east, 2 = south, 3 = west
 ---@type number
-MoveHelper.direction = 0
+moveHelper.direction = 0
 
----@enum MoveHelper.directions
-MoveHelper.directions = {
+---@enum moveHelper.directions
+moveHelper.directions = {
     north = 0,
     east = 1,
     south = 2,
@@ -18,10 +20,10 @@ MoveHelper.directions = {
 
 --- For easy iteration
 ---@type string[]
-MoveHelper.directionsArray = { "north", "east", "south", "west" }
+moveHelper.directionsArray = { "north", "east", "south", "west" }
 
----@enum MoveHelper.turns
-MoveHelper.turns = {
+---@enum moveHelper.turns
+moveHelper.turns = {
     none = 0,
     left = 1,
     right = 2,
@@ -32,71 +34,74 @@ MoveHelper.turns = {
 ---3   M   1
 ---      2
 
-function MoveHelper:turnLeft()
+function moveHelper:turnLeft()
     turtle.turnLeft()
     self.direction = (self.direction - 1) % 4
+    hook:call("moveHelper.onDirectionChanged", self.direction)
 end
 
-function MoveHelper:turnRight()
+function moveHelper:turnRight()
     turtle.turnRight()
     self.direction = (self.direction + 1) % 4
+    hook:call("moveHelper.onDirectionChanged", self.direction)
 end
 
-function MoveHelper:turnAround()
+function moveHelper:turnAround()
     turtle.turnLeft()
     turtle.turnLeft()
     self.direction = (self.direction + 2) % 4
+    hook:call("moveHelper.onDirectionChanged", self.direction)
 end
 
----@param dir MoveHelper.directions
----@return MoveHelper.turns
-function MoveHelper:getQuickTurn(dir)
+---@param dir moveHelper.directions
+---@return moveHelper.turns
+function moveHelper:getQuickTurn(dir)
     if dir < 0 or dir > 3 then
         error("Invalid direction: " .. dir, 2)
-        return MoveHelper.turns.none
+        return moveHelper.turns.none
     end
 
     local diff = (dir - self.direction) % 4
     if diff == 0 then
-        return MoveHelper.turns.none
+        return moveHelper.turns.none
     elseif diff == 1 then
-        return MoveHelper.turns.right
+        return moveHelper.turns.right
     elseif diff == 2 then
-        return MoveHelper.turns.around
+        return moveHelper.turns.around
     elseif diff == 3 then
-        return MoveHelper.turns.left
+        return moveHelper.turns.left
     end
-    return MoveHelper.turns.none
+    return moveHelper.turns.none
 end
 
----@param dir MoveHelper.directions
-function MoveHelper:turnTo(dir)
+---@param dir moveHelper.directions
+function moveHelper:turnTo(dir)
     if dir < 0 or dir > 3 then
         error("Invalid direction: " .. dir, 2)
         return
     end
 
     local turn = self:getQuickTurn(dir)
-    if turn == MoveHelper.turns.left then
+    if turn == moveHelper.turns.left then
         self:turnLeft()
-    elseif turn == MoveHelper.turns.right then
+    elseif turn == moveHelper.turns.right then
         self:turnRight()
-    elseif turn == MoveHelper.turns.around then
+    elseif turn == moveHelper.turns.around then
         self:turnAround()
     end
 end
 
 ---@return string
-function MoveHelper:getDirectionName()
-    if MoveHelper.directionsArray[self.direction] then
-        return MoveHelper.directionsArray[self.direction]
+function moveHelper:getDirectionName()
+    if moveHelper.directionsArray[self.direction] then
+        return moveHelper.directionsArray[self.direction]
     end
     return "unknown"
 end
 
 ---@return boolean
-function MoveHelper:forward()
-    RefuelHelper:tryRefuel()
+function moveHelper:forward()
+    refuelHelper:tryRefuel()
     self:dig()
     if turtle.forward() then
         if self.direction == self.directions.north then
@@ -108,14 +113,15 @@ function MoveHelper:forward()
         elseif self.direction == self.directions.west then
             self.position = self.position:addX(-1)
         end
+        hook:call("moveHelper.onPositionChanged", self.position:copy())
         return true
     end
     return false
 end
 
 ---@return boolean
-function MoveHelper:back()
-    RefuelHelper:tryRefuel()
+function moveHelper:back()
+    refuelHelper:tryRefuel()
     if turtle.back() then
         if self.direction == self.directions.north then
             self.position = self.position:addZ(-1)
@@ -126,36 +132,39 @@ function MoveHelper:back()
         elseif self.direction == self.directions.west then
             self.position = self.position:addX(1)
         end
+        hook:call("moveHelper.onPositionChanged", self.position:copy())
         return true
     end
     return false
 end
 
 ---@return boolean
-function MoveHelper:up()
-    RefuelHelper:tryRefuel()
+function moveHelper:up()
+    refuelHelper:tryRefuel()
     self:digUp()
     if turtle.up() then
         self.position = self.position:addY(1)
+        hook:call("moveHelper.onPositionChanged", self.position:copy())
         return true
     end
     return false
 end
 
 ---@return boolean
-function MoveHelper:down()
-    RefuelHelper:tryRefuel()
+function moveHelper:down()
+    refuelHelper:tryRefuel()
     self:digDown()
     if turtle.down() then
         self.position = self.position:addY(-1)
+        hook:call("moveHelper.onPositionChanged", self.position:copy())
         return true
     end
     return false
 end
 
----@param vec3 Vec3 local pos
+---@param vec3 vec3 local pos
 ---@return boolean
-function MoveHelper:moveTo(vec3)
+function moveHelper:moveTo(vec3)
     if vec3:isNil() then
         error("Invalid coordinates: " .. vec3, 2)
         return false
@@ -208,24 +217,24 @@ function MoveHelper:moveTo(vec3)
 end
 
 ---@return boolean
-function MoveHelper:dig()
+function moveHelper:dig()
     if not turtle.detect() then return false end
     turtle.dig()
     return true
 end
 
 ---@return boolean
-function MoveHelper:digUp()
+function moveHelper:digUp()
     if not turtle.detectUp() then return false end
     turtle.digUp()
     return true
 end
 
 ---@return boolean
-function MoveHelper:digDown()
+function moveHelper:digDown()
     if not turtle.detectDown() then return false end
     turtle.digDown()
     return true
 end
 
-return MoveHelper
+return moveHelper

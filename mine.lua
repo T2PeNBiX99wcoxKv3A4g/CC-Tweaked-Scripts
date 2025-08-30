@@ -1,11 +1,14 @@
-local Mine = {}
-local Vec3 = require("vector3")
-local MoveHelper = require("move_helper")
-local RefuelHelper = require("refuel_helper")
-local LogHelper = require("log_helper")
+---@class mine
+local mine = {}
+local vec3 = require("vector3")
+local moveHelper = require("move_helper")
+local refuelHelper = require("refuel_helper")
+local logHelper = require("log_helper")
+local saveHelper = require("save_helper")
+local hook = require("hook")
 
----@enum Mine.status
-Mine.status = {
+---@enum mine.status
+mine.status = {
     idle = 0,
     mining = 1,
     tempBacking = 2,
@@ -15,27 +18,33 @@ Mine.status = {
     unfinished = 6
 }
 
----@type Vec3
-Mine.initPos = Vec3(0, 0, 0)
----@type MoveHelper.directions
-Mine.initDirection = MoveHelper.directions.north
----@type Vec3[]
-Mine.steps = {}
 ---@type number
-Mine.currentStep = 1
----@type Mine.status
-Mine.currentStatus = Mine.status.idle
+mine.size = 5
+---@type number
+mine.height = 11
+---@type vec3
+mine.initPos = vec3(0, 0, 0)
+---@type moveHelper.directions
+mine.initDirection = moveHelper.directions.north
+---@type vec3[]
+mine.steps = {}
+---@type number
+mine.currentStep = 1
+---@type mine.status
+mine.currentStatus = mine.status.idle
+---@type string
+mine.saveFileName = "mine_save.txt"
 
 ---@param size number
 ---@param y number
----@return Vec3[]
-function Mine:mine2DAreaPath(size, y)
+---@return vec3[]
+function mine:mine2DAreaPath(size, y)
     local points = {}
     local sizeEnd = size - 1
 
     for x = 0, -sizeEnd, -1 do
         for z = 0, sizeEnd do
-            table.insert(points, Vec3(x, y, z))
+            table.insert(points, vec3(x, y, z))
         end
     end
 
@@ -51,8 +60,8 @@ end
 
 ---@param size number
 ---@param height number
----@return Vec3[]
-function Mine:mine3DAreaPath(size, height)
+---@return vec3[]
+function mine:mine3DAreaPath(size, height)
     local points = {}
 
     for y = -1, -height, -1 do
@@ -66,28 +75,29 @@ function Mine:mine3DAreaPath(size, height)
 end
 
 ---@return nil
-function Mine:move()
+function mine:move()
     local step = self.currentStep
     local movePos = self.steps[step]
-    LogHelper.progress(string.format("Step %d/%d: {x: %d, y: %d, z: %d}", step, #self.steps, movePos.x, movePos.y,
+    logHelper.progress(string.format("Step %d/%d: {x: %d, y: %d, z: %d}", step, #self.steps, movePos.x, movePos.y,
         movePos.z))
-    MoveHelper:moveTo(movePos)
+    moveHelper:moveTo(movePos)
     self.currentStep = self.currentStep + 1
+    self:save()
 end
 
 ---@return nil
-function Mine:backToStart()
-    MoveHelper:moveTo(self.initPos)
-    MoveHelper:turnTo(self.initDirection)
+function mine:backToStart()
+    moveHelper:moveTo(self.initPos)
+    moveHelper:turnTo(self.initDirection)
 end
 
 ---@return nil
-function Mine:dropItemToChest()
-    MoveHelper:turnTo(MoveHelper.directions.south)
+function mine:dropItemToChest()
+    moveHelper:turnTo(moveHelper.directions.south)
 
     for i = 1, 16 do
         local item = turtle.getItemDetail(i)
-        if item and not RefuelHelper.coalList[item.name] then
+        if item and not refuelHelper.coalList[item.name] then
             turtle.select(i)
             turtle.drop(item.count)
         end
@@ -96,55 +106,59 @@ function Mine:dropItemToChest()
     turtle.select(1)
 end
 
-function Mine:checkInventory()
+---@return nil
+function mine:checkInventory()
     local itemSpace = 0
 
     for i = 1, 16 do
         itemSpace = itemSpace + turtle.getItemSpace(i)
     end
 
-    if itemSpace > 64 then return end
-    LogHelper.warning(string.format(
+    if itemSpace > 128 then return end
+    logHelper.warning(string.format(
         "Inventory space low: %d space left, Temporarily returning to start position to drop items...", itemSpace))
     self.currentStatus = self.status.tempBacking
 end
 
-Mine.statusTick = {
-    [Mine.status.mining] = function(self)
-        if self.currentStep > #self.Steps then
+---@type table<mine.status, fun(self: mine)>
+mine.statusTick = {
+    [mine.status.mining] = function(self)
+        if self.currentStep > #self.steps then
             self.currentStatus = self.status.backingFinished
-            LogHelper.massage("Mining complete! Returning to start position...")
+            logHelper.massage("Mining complete! Returning to start position...")
             return
         end
         self:move()
         self:checkInventory()
     end,
-    [Mine.status.tempBacking] = function(self)
+    [mine.status.tempBacking] = function(self)
         self:backToStart()
         self:dropItemToChest()
         self.currentStatus = self.status.mining
-        LogHelper.massage("Items dropped to chest. Resuming mining...")
+        logHelper.massage("Items dropped to chest. Resuming mining...")
     end,
-    [Mine.status.backingFinished] = function(self)
+    [mine.status.backingFinished] = function(self)
         self:backToStart()
         self:dropItemToChest()
         self:backToStart()
         self.currentStatus = self.status.finished
-        LogHelper.massage("Returned to start position. Mining operation finished.")
+        self:deleteSave()
+        logHelper.massage("Returned to start position. Mining operation finished.")
     end,
-    [Mine.status.backingUnfinished] = function(self)
+    [mine.status.backingUnfinished] = function(self)
         self:backToStart()
         self:dropItemToChest()
         self:backToStart()
         self.currentStatus = self.status.unfinished
-        LogHelper.error("Returned to start position. Mining operation unfinished due to lack of fuel.")
+        self:deleteSave()
+        logHelper.error("Returned to start position. Mining operation unfinished due to lack of fuel.")
     end
 }
 
-function Mine:tick()
-    if RefuelHelper.currentStatus == RefuelHelper.status.outOfFuel then
+function mine:tick()
+    if refuelHelper.currentStatus == refuelHelper.status.outOfFuel then
         self.currentStatus = self.status.backingUnfinished
-        LogHelper.error("Out of fuel! Returning to start position...")
+        logHelper.error("Out of fuel! Returning to start position...")
     end
 
     if self.statusTick[self.currentStatus] then
@@ -152,9 +166,65 @@ function Mine:tick()
     end
 end
 
-function Mine:init()
-    self.initPos = MoveHelper.position
-    self.initDirection = MoveHelper.direction
+---@return boolean
+function mine:save()
+    local data = {
+        size = self.size,
+        height = self.height,
+        initPos = self.initPos,
+        initDirection = self.initDirection,
+        position = moveHelper.position,
+        direction = moveHelper.direction,
+        steps = self.steps,
+        currentStep = self.currentStep,
+        currentStatus = self.currentStatus
+    }
+    return saveHelper.save(self.saveFileName, data)
+end
+
+---@return boolean
+function mine:load()
+    local data = saveHelper.load(self.saveFileName)
+    if not data then
+        self:deleteSave()
+        return false
+    end
+    if not data.size or not data.height or not data.initPos or not data.initDirection or not data.position or not data.direction or not data.steps or not data.currentStep or not data.currentStatus then
+        self:deleteSave()
+        return false
+    end
+
+    self.size = data.size
+    self.height = data.height
+    self.initPos = data.initPos
+    self.initDirection = data.initDirection
+    self.steps = data.steps
+    self.currentStep = data.currentStep
+    self.currentStatus = data.currentStatus
+
+    return true
+end
+
+---@return boolean
+function mine:deleteSave()
+    return saveHelper.delete(self.saveFileName)
+end
+
+---@param newDirection moveHelper.directions
+function mine:onDirectionChanged(newDirection)
+    self:save()
+end
+
+---@param newPosition vec3
+function mine:onPositionChanged(newPosition)
+    self:save()
+end
+
+function mine:init()
+    hook:add("moveHelper.onDirectionChanged", self, self.onDirectionChanged)
+    hook:add("moveHelper.onPositionChanged", self, self.onPositionChanged)
+    self.initPos = moveHelper.position
+    self.initDirection = moveHelper.direction
 
     term.clear()
     term.setCursorPos(1, 1)
@@ -172,10 +242,17 @@ function Mine:init()
     term.setCursorPos(1, 1)
 
     self.steps = self:mine3DAreaPath(size, height)
-
-    LogHelper.title(string.format("Mining a cube of %d * %d * %d", size, size, height))
-
     self.currentStatus = self.status.mining
+    self.size = size
+    self.height = height
+
+    if self:load() then
+        logHelper.massage("Loaded previous state. Resuming mining operation...")
+    else
+        logHelper.massage("Starting new mining operation...")
+    end
+
+    logHelper.title(string.format("Mining a cube of %d * %d * %d", self.size, self.size, self.height))
 
     while true do
         if self.currentStatus == self.status.finished or self.currentStatus == self.status.unfinished then break end
@@ -184,4 +261,4 @@ function Mine:init()
     end
 end
 
-Mine:init()
+mine:init()

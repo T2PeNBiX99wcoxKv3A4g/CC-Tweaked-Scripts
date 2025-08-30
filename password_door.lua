@@ -1,33 +1,34 @@
-local Door = {}
+---@class door
+local door = {}
 
 ---@type number
-Door.sleepTime = 10
+door.sleepTime = 10
 ---@type string
-Door.doorSide = "left"
+door.doorSide = "left"
 ---@type string
-Door.password = "2"
+door.password = "2"
 ---@type string
-Door.inputHint = "1 + 1 = ?"
+door.inputHint = "1 + 1 = ?"
 ---@type string
-Door.inputPrefix = "Answer > "
+door.inputPrefix = "Answer > "
 ---@type string
-Door.logPassMsg = "Pass!"
+door.logPassMsg = "Pass!"
 ---@type string
-Door.logFailedMsg = "Failed!"
+door.logFailedMsg = "Failed!"
 ---@type string
-Door.logDoorOpenMsg = string.format("Door will open in %d seconds", Door.sleepTime)
+door.logDoorOpenMsg = string.format("Door will open in %d seconds", door.sleepTime)
 ---@type string
-Door.logRetryMsg = string.format("Retry after %d seconds", Door.sleepTime)
+door.logRetryMsg = string.format("Retry after %d seconds", door.sleepTime)
 
 ---@return nil
-function Door:init()
+function door:init()
     while true do
-        Door:inputPassword()
+        door:inputPassword()
     end
 end
 
 ---@return nil
-function Door:inputPassword()
+function door:inputPassword()
     print(self.inputHint)
     write(self.inputPrefix)
 
@@ -39,12 +40,12 @@ function Door:inputPassword()
 end
 
 ---@return boolean
-function Door:checkPassword()
+function door:checkPassword()
     return read("*") == self.password
 end
 
 ---@return nil
-function Door:pass()
+function door:pass()
     print(self.logPassMsg)
     print(self.logDoorOpenMsg)
     redstone.setOutput(self.doorSide, true)
@@ -53,10 +54,10 @@ function Door:pass()
 end
 
 ---@return nil
-function Door:failed()
+function door:failed()
     print(self.logFailedMsg)
     print(self.logRetryMsg)
     sleep(self.sleepTime)
 end
 
-Door:init()
+door:init()

@@ -1,8 +1,9 @@
-local Attack = {}
+---@class attack
+local attack = {}
 
-Attack.weaponSide = "right"
+attack.weaponSide = "right"
 
-function Attack:init()
+function attack:init()
     print("Ender man Killer is start")
     while true do
         self:toAttack()
@@ -10,11 +11,11 @@ function Attack:init()
     end
 end
 
-function Attack:toAttack()
+function attack:toAttack()
     turtle.attack(self.weaponSide)
 end
 
-function Attack:checkAnyItem()
+function attack:checkAnyItem()
     for i = 1, 16 do
         local count = turtle.getItemCount(i)
         if count > 0 then
@@ -24,4 +25,4 @@ function Attack:checkAnyItem()
     end
 end
 
-Attack:init()
+attack:init()
