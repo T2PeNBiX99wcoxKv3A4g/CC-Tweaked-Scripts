@@ -230,29 +230,29 @@ function mine:init()
     self.initPos = moveHelper.position
     self.initDirection = moveHelper.direction
 
-    term.clear()
-    term.setCursorPos(1, 1)
-    print("Enter the size of the cube to mine (default 5): ")
-    write("> ")
-    local size = tonumber(read()) or 5
-
-    term.clear()
-    term.setCursorPos(1, 1)
-    print("Enter the height of the cube to mine (default 11): ")
-    write("> ")
-    local height = tonumber(read()) or 11
-
-    term.clear()
-    term.setCursorPos(1, 1)
-
-    self.steps = self:mine3DAreaPath(size, height)
-    self.currentStatus = self.status.mining
-    self.size = size
-    self.height = height
-
     if self:load() then
         logHelper.massage("Loaded previous state. Resuming mining operation...")
     else
+        term.clear()
+        term.setCursorPos(1, 1)
+        print("Enter the size of the cube to mine (default 5): ")
+        write("> ")
+        local size = tonumber(read()) or 5
+
+        term.clear()
+        term.setCursorPos(1, 1)
+        print("Enter the height of the cube to mine (default 11): ")
+        write("> ")
+        local height = tonumber(read()) or 11
+
+        term.clear()
+        term.setCursorPos(1, 1)
+
+        self.steps = self:mine3DAreaPath(size, height)
+        self.currentStatus = self.status.mining
+        self.size = size
+        self.height = height
+
         logHelper.massage("Starting new mining operation...")
     end
 
