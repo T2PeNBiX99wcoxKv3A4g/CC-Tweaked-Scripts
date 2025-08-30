@@ -102,15 +102,17 @@ end
 
 ---@return nil
 function mine:checkInventory()
-    local itemSpace = 0
+    local hasSpace = false
 
     for i = 1, 16 do
-        itemSpace = itemSpace + turtle.getItemSpace(i)
+        if turtle.getItemCount(i) < 1 then
+            hasSpace = true
+            break
+        end
     end
 
-    if itemSpace > 128 then return end
-    logHelper.warning(string.format(
-        "Inventory space low: %d space left, Temporarily returning to start position to drop items...", itemSpace))
+    if hasSpace then return end
+    logHelper.warning("Inventory space low, Temporarily returning to start position to drop items...")
     self.currentStatus = self.status.tempBacking
 end
 
