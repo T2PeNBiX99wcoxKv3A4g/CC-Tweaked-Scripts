@@ -31,9 +31,9 @@ destroyer.currentStep = 1
 ---@type destroyer.status
 destroyer.currentStatus = destroyer.status.idle
 ---@type fileHelper
-destroyer.saveHelper = fileHelper(fileHelper.type.save, "destroyer_save.txt")
+destroyer.saveHelper = fileHelper(fileHelper.type.save, "destroyer_save.json")
 ---@type fileHelper
-destroyer.dataHelper = fileHelper(fileHelper.type.data, "destroyer_config.txt")
+destroyer.dataHelper = fileHelper(fileHelper.type.data, "destroyer_config.json")
 
 ---@param size number
 ---@param height number

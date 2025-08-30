@@ -26,7 +26,7 @@ function fileHelper:save(data)
 
     local file = fs.open(string.format("%s/%s", self.folder, self.fileName), "w")
     if not file then return false end
-    file.write(textutils.serialize(data))
+    file.write(textutils.serializeJSON(data))
     file.close()
     return true
 end
@@ -42,7 +42,7 @@ function fileHelper:load()
         file.close()
         return
     end
-    local data = textutils.unserialize(fileString)
+    local data = textutils.unserializeJSON(fileString)
     file.close()
     return data
 end

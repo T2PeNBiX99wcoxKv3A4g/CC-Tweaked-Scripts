@@ -27,7 +27,7 @@ mine.currentStep = 1
 ---@type mine.status
 mine.currentStatus = mine.status.idle
 ---@type fileHelper
-mine.saveHelper = fileHelper(fileHelper.type.save, "mine_save.txt")
+mine.saveHelper = fileHelper(fileHelper.type.save, "mine_save.json")
 
 ---@param size number
 ---@param y number
