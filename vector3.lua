@@ -1,6 +1,7 @@
 ---@class vec3
 local vec3 = {}
 
+---Will never be use and replace with instance table
 ---@type number
 vec3.x = nil
 ---@type number

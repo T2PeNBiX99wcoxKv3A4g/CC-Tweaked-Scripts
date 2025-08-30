@@ -1,8 +1,8 @@
----@class mine
-local mine = {}
+---@class destroyer
+local destroyer = {}
 
----@enum mine.status
-mine.status = {
+---@enum destroyer.status
+destroyer.status = {
     idle = 0,
     mining = 1,
     tempBacking = 2,
@@ -13,40 +13,48 @@ mine.status = {
 }
 
 ---@type number
-mine.size = 5
+destroyer.size = 10
 ---@type number
-mine.height = 11
+destroyer.height = 2
+---@type number
+destroyer.width = 2
+---@type string
+destroyer.attackSide = "left"
 ---@type vec3
-mine.initPos = vec3(0, 0, 0)
+destroyer.initPos = vec3(0, 0, 0)
 ---@type moveHelper.directions
-mine.initDirection = moveHelper.directions.north
+destroyer.initDirection = moveHelper.directions.north
 ---@type vec3[]
-mine.steps = {}
+destroyer.steps = {}
 ---@type number
-mine.currentStep = 1
----@type mine.status
-mine.currentStatus = mine.status.idle
+destroyer.currentStep = 1
+---@type destroyer.status
+destroyer.currentStatus = destroyer.status.idle
 ---@type fileHelper
-mine.saveHelper = fileHelper(fileHelper.type.save, "mine_save.txt")
+destroyer.saveHelper = fileHelper(fileHelper.type.save, "destroyer_save.txt")
+---@type fileHelper
+destroyer.dataHelper = fileHelper(fileHelper.type.data, "destroyer_config.txt")
 
 ---@param size number
----@param y number
+---@param height number
+---@param x number
 ---@return vec3[]
-function mine:mine2DAreaPath(size, y)
+function destroyer:mine2DAreaPath(size, height, x)
     local points = {}
     local sizeEnd = size - 1
+    local heightEnd = height - 1
 
-    for x = 0, -sizeEnd, -1 do
+    for y = 0, heightEnd do
         for z = 0, sizeEnd do
             table.insert(points, vec3(x, y, z))
         end
     end
 
     table.sort(points, function(a, b)
-        if a.x == b.x then
+        if a.y == b.y then
             return a.z < b.z
         end
-        return a.x > b.x
+        return a.y > b.y
     end)
 
     return points
@@ -54,12 +62,13 @@ end
 
 ---@param size number
 ---@param height number
+---@param width number
 ---@return vec3[]
-function mine:mine3DAreaPath(size, height)
+function destroyer:mine3DAreaPath(size, height, width)
     local points = {}
 
-    for y = -1, -height, -1 do
-        local layerPoints = self:mine2DAreaPath(size, y)
+    for x = -1, -width, -1 do
+        local layerPoints = self:mine2DAreaPath(size, height, x)
         for _, v in ipairs(layerPoints) do
             table.insert(points, v)
         end
@@ -69,7 +78,7 @@ function mine:mine3DAreaPath(size, height)
 end
 
 ---@return nil
-function mine:move()
+function destroyer:move()
     local step = self.currentStep
     local movePos = self.steps[step]
     logHelper.progress(string.format("Step %d/%d: {x: %d, y: %d, z: %d}", step, #self.steps, movePos.x, movePos.y,
@@ -80,13 +89,13 @@ function mine:move()
 end
 
 ---@return nil
-function mine:backToStart()
+function destroyer:backToStart()
     moveHelper:moveTo(self.initPos)
     moveHelper:turnTo(self.initDirection)
 end
 
 ---@return nil
-function mine:dropItemToChest()
+function destroyer:dropItemToChest()
     moveHelper:turnTo(moveHelper.directions.south)
 
     for i = 1, 16 do
@@ -100,40 +109,23 @@ function mine:dropItemToChest()
     turtle.select(1)
 end
 
----@return nil
-function mine:checkInventory()
-    local hasSpace = false
-
-    for i = 1, 16 do
-        if turtle.getItemCount(i) < 1 then
-            hasSpace = true
-            break
-        end
-    end
-
-    if hasSpace then return end
-    logHelper.warning("Inventory space low, Temporarily returning to start position to drop items...")
-    self.currentStatus = self.status.tempBacking
-end
-
----@type table<mine.status, fun(self: mine)>
-mine.statusTick = {
-    [mine.status.mining] = function(self)
+---@type table<destroyer.status, fun(self: destroyer)>
+destroyer.statusTick = {
+    [destroyer.status.mining] = function(self)
         if self.currentStep > #self.steps then
             self.currentStatus = self.status.backingFinished
             logHelper.massage("Mining complete! Returning to start position...")
             return
         end
         self:move()
-        self:checkInventory()
     end,
-    [mine.status.tempBacking] = function(self)
+    [destroyer.status.tempBacking] = function(self)
         self:backToStart()
         self:dropItemToChest()
         self.currentStatus = self.status.mining
         logHelper.massage("Items dropped to chest. Resuming mining...")
     end,
-    [mine.status.backingFinished] = function(self)
+    [destroyer.status.backingFinished] = function(self)
         self:backToStart()
         self:dropItemToChest()
         self:backToStart()
@@ -141,7 +133,7 @@ mine.statusTick = {
         self:deleteSave()
         logHelper.massage("Returned to start position. Mining operation finished.")
     end,
-    [mine.status.backingUnfinished] = function(self)
+    [destroyer.status.backingUnfinished] = function(self)
         self:backToStart()
         self:dropItemToChest()
         self:backToStart()
@@ -151,7 +143,7 @@ mine.statusTick = {
     end
 }
 
-function mine:tick()
+function destroyer:tick()
     if refuelHelper.currentStatus == refuelHelper.status.outOfFuel then
         self.currentStatus = self.status.backingUnfinished
         logHelper.error("Out of fuel! Returning to start position...")
@@ -163,10 +155,12 @@ function mine:tick()
 end
 
 ---@return boolean
-function mine:save()
+function destroyer:save()
     local data = {
         size = self.size,
         height = self.height,
+        width = self.width,
+        attackSide = self.attackSide,
         initPos = self.initPos,
         initDirection = self.initDirection,
         position = moveHelper.position,
@@ -179,19 +173,21 @@ function mine:save()
 end
 
 ---@return boolean
-function mine:load()
+function destroyer:load()
     local data = self.saveHelper:load()
     if not data then
         self:deleteSave()
         return false
     end
-    if not data.size or not data.height or not data.initPos or not data.initDirection or not data.position or not data.direction or not data.steps or not data.currentStep or not data.currentStatus then
+    if not data.size or not data.height or not data.width or not data.attackSide or not data.initPos or not data.initDirection or not data.position or not data.direction or not data.steps or not data.currentStep or not data.currentStatus then
         self:deleteSave()
         return false
     end
 
     self.size = data.size
     self.height = data.height
+    self.width = data.width
+    self.attackSide = data.attackSide
     self.initPos = vec3:formTable(data.initPos) or vec3:zero()
     self.initDirection = data.initDirection
     moveHelper.position = vec3:formTable(data.position)
@@ -211,21 +207,23 @@ function mine:load()
 end
 
 ---@return boolean
-function mine:deleteSave()
+function destroyer:deleteSave()
     return self.saveHelper:delete()
 end
 
 ---@param newDirection moveHelper.directions
-function mine:onDirectionChanged(newDirection)
+function destroyer:onDirectionChanged(newDirection)
+    turtle.attack(self.attackSide)
     self:save()
 end
 
 ---@param newPosition vec3
-function mine:onPositionChanged(newPosition)
+function destroyer:onPositionChanged(newPosition)
+    turtle.attack(self.attackSide)
     self:save()
 end
 
-function mine:init()
+function destroyer:init()
     hook:add("moveHelper.onDirectionChanged", self, self.onDirectionChanged)
     hook:add("moveHelper.onPositionChanged", self, self.onPositionChanged)
 
@@ -235,30 +233,35 @@ function mine:init()
         self.initPos = moveHelper.position
         self.initDirection = moveHelper.direction
 
-        term.clear()
-        term.setCursorPos(1, 1)
-        print("Enter the size of the cube to mine (default 5): ")
-        write("> ")
-        local size = tonumber(read()) or 5
+        local config = self.dataHelper:load()
+
+        if config and config.size and config.height and config.width then
+            self.size = config.size
+            self.height = config.height
+            self.width = config.width
+            self.attackSide = config.attackSide
+        else
+            local configTable = {
+                size = self.size,
+                height = self.height,
+                width = self.width,
+                attackSide = self.attackSide
+            }
+
+            self.dataHelper:delete()
+            self.dataHelper:save(configTable)
+        end
 
         term.clear()
         term.setCursorPos(1, 1)
-        print("Enter the height of the cube to mine (default 11): ")
-        write("> ")
-        local height = tonumber(read()) or 11
 
-        term.clear()
-        term.setCursorPos(1, 1)
-
-        self.steps = self:mine3DAreaPath(size, height)
+        self.steps = self:mine3DAreaPath(self.size, self.height, self.width)
         self.currentStatus = self.status.mining
-        self.size = size
-        self.height = height
 
         logHelper.massage("Starting new mining operation...")
     end
 
-    logHelper.title(string.format("Mining a cube of %d * %d * %d", self.size, self.size, self.height))
+    logHelper.title(string.format("Mining a cube of %d * %d * %d", self.size, self.height, self.width))
 
     while true do
         if self.currentStatus == self.status.finished or self.currentStatus == self.status.unfinished then break end
@@ -267,4 +270,4 @@ function mine:init()
     end
 end
 
-return mine
+return destroyer

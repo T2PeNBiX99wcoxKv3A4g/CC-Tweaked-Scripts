@@ -11,6 +11,6 @@ moveHelper = require("move_helper")
 
 ---@diagnostic enable: lowercase-global
 
-local mine = require("mine")
+local destroyer = require("destroyer")
 
-mine:init()
+destroyer:init()

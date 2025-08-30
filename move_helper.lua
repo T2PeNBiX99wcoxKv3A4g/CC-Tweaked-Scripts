@@ -17,6 +17,7 @@ moveHelper.directions = {
 
 --- For easy iteration
 ---@type string[]
+---@private
 moveHelper.directionsArray = { "north", "east", "south", "west" }
 
 ---@enum moveHelper.turns
