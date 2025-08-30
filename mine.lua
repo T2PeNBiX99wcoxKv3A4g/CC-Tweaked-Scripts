@@ -69,8 +69,7 @@ end
 function Mine:move()
     local step = self.currentStep
     local movePos = self.Steps[step]
-    LogHelper.progress(string.format("Step %d/%d: Moving to {x: %d, y: %d, z: %d}", step, #self.Steps, movePos.x,
-        movePos.y,
+    LogHelper.progress(string.format("Step %d/%d: {x: %d, y: %d, z: %d}", step, #self.Steps, movePos.x, movePos.y,
         movePos.z))
     MoveHelper:moveTo(movePos)
     self.currentStep = self.currentStep + 1
