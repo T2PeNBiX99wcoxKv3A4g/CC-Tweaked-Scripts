@@ -202,6 +202,8 @@ function mine:load()
     self.height = data.height
     self.initPos = data.initPos
     self.initDirection = data.initDirection
+    moveHelper.position = data.position
+    moveHelper.direction = data.direction
     self.steps = data.steps
     self.currentStep = data.currentStep
     self.currentStatus = data.currentStatus
