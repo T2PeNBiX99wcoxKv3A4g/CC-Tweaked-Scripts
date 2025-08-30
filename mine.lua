@@ -20,7 +20,7 @@ Mine.initPos = Vec3(0, 0, 0)
 ---@type MoveHelper.directions
 Mine.initDirection = MoveHelper.directions.north
 ---@type Vec3[]
-Mine.Steps = {}
+Mine.steps = {}
 ---@type number
 Mine.currentStep = 1
 ---@type Mine.status
@@ -68,8 +68,8 @@ end
 ---@return nil
 function Mine:move()
     local step = self.currentStep
-    local movePos = self.Steps[step]
-    LogHelper.progress(string.format("Step %d/%d: {x: %d, y: %d, z: %d}", step, #self.Steps, movePos.x, movePos.y,
+    local movePos = self.steps[step]
+    LogHelper.progress(string.format("Step %d/%d: {x: %d, y: %d, z: %d}", step, #self.steps, movePos.x, movePos.y,
         movePos.z))
     MoveHelper:moveTo(movePos)
     self.currentStep = self.currentStep + 1
@@ -109,13 +109,8 @@ function Mine:checkInventory()
     self.currentStatus = self.status.tempBacking
 end
 
-function Mine:tick()
-    if RefuelHelper.currentStatus == RefuelHelper.status.outOfFuel then
-        self.currentStatus = self.status.backingUnfinished
-        LogHelper.error("Out of fuel! Returning to start position...")
-    end
-
-    if self.currentStatus == self.status.mining then
+Mine.statusTick = {
+    [Mine.status.mining] = function(self)
         if self.currentStep > #self.Steps then
             self.currentStatus = self.status.backingFinished
             LogHelper.massage("Mining complete! Returning to start position...")
@@ -123,23 +118,37 @@ function Mine:tick()
         end
         self:move()
         self:checkInventory()
-    elseif self.currentStatus == self.status.tempBacking then
+    end,
+    [Mine.status.tempBacking] = function(self)
         self:backToStart()
         self:dropItemToChest()
         self.currentStatus = self.status.mining
         LogHelper.massage("Items dropped to chest. Resuming mining...")
-    elseif self.currentStatus == self.status.backingFinished then
+    end,
+    [Mine.status.backingFinished] = function(self)
         self:backToStart()
         self:dropItemToChest()
         self:backToStart()
         self.currentStatus = self.status.finished
         LogHelper.massage("Returned to start position. Mining operation finished.")
-    elseif self.currentStatus == self.status.backingUnfinished then
+    end,
+    [Mine.status.backingUnfinished] = function(self)
         self:backToStart()
         self:dropItemToChest()
         self:backToStart()
         self.currentStatus = self.status.unfinished
         LogHelper.error("Returned to start position. Mining operation unfinished due to lack of fuel.")
+    end
+}
+
+function Mine:tick()
+    if RefuelHelper.currentStatus == RefuelHelper.status.outOfFuel then
+        self.currentStatus = self.status.backingUnfinished
+        LogHelper.error("Out of fuel! Returning to start position...")
+    end
+
+    if self.statusTick[self.currentStatus] then
+        self.statusTick[self.currentStatus](self)
     end
 end
 
@@ -162,7 +171,7 @@ function Mine:init()
     term.clear()
     term.setCursorPos(1, 1)
 
-    self.Steps = self:mine3DAreaPath(size, height)
+    self.steps = self:mine3DAreaPath(size, height)
 
     LogHelper.title(string.format("Mining a cube of %d * %d * %d", size, size, height))
 
