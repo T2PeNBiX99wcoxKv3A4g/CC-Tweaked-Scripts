@@ -156,6 +156,9 @@ function Mine:init()
     write("> ")
     local height = tonumber(read()) or 11
 
+    term.clear()
+    term.setCursorPos(1, 1)
+
     self.Steps = self:mine3DAreaPath(size, height)
 
     LogHelper.title(string.format("Mining a cube of size %d and height %d", size, height))
