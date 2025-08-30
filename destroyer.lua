@@ -157,10 +157,6 @@ end
 ---@return boolean
 function destroyer:save()
     local data = {
-        size = self.size,
-        height = self.height,
-        width = self.width,
-        attackSide = self.attackSide,
         initPos = self.initPos,
         initDirection = self.initDirection,
         position = moveHelper.position,
@@ -179,15 +175,11 @@ function destroyer:load()
         self:deleteSave()
         return false
     end
-    if not data.size or not data.height or not data.width or not data.attackSide or not data.initPos or not data.initDirection or not data.position or not data.direction or not data.steps or not data.currentStep or not data.currentStatus then
+    if not data.initPos or not data.initDirection or not data.position or not data.direction or not data.steps or not data.currentStep or not data.currentStatus then
         self:deleteSave()
         return false
     end
 
-    self.size = data.size
-    self.height = data.height
-    self.width = data.width
-    self.attackSide = data.attackSide
     self.initPos = vec3:formTable(data.initPos) or vec3:zero()
     self.initDirection = data.initDirection
     moveHelper.position = vec3:formTable(data.position)
@@ -257,6 +249,7 @@ function destroyer:init()
 
         self.steps = self:mine3DAreaPath(self.size, self.height, self.width)
         self.currentStatus = self.status.mining
+        self:save()
 
         logHelper.massage("Starting new mining operation...")
     end

@@ -254,6 +254,7 @@ function mine:init()
         self.currentStatus = self.status.mining
         self.size = size
         self.height = height
+        self:save()
 
         logHelper.massage("Starting new mining operation...")
     end
