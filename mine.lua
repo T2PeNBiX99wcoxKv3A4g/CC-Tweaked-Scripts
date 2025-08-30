@@ -265,4 +265,4 @@ function mine:init()
     end
 end
 
-mine:init()
+return mine
