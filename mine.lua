@@ -160,7 +160,7 @@ function Mine:init()
 
     self.Steps = self:mine3DAreaPath(size, height)
 
-    LogHelper.title(string.format("Mining a cube of size %d and height %d", size, height))
+    LogHelper.title(string.format("Mining a cube of %d * %d * %d", size, size, height))
 
     self.currentStatus = self.status.mining
 
