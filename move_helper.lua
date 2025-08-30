@@ -31,23 +31,29 @@ moveHelper.turns = {
 ---3   M   1
 ---      2
 
+---@return boolean
 function moveHelper:turnLeft()
-    turtle.turnLeft()
-    self.direction = (self.direction - 1) % 4
-    hook:call("moveHelper.onDirectionChanged", self.direction)
+    if turtle.turnLeft() then
+        self.direction = (self.direction - 1) % 4
+        hook:call("moveHelper.onDirectionChanged", self.direction)
+        return true
+    end
+    return false
 end
 
+---@return boolean
 function moveHelper:turnRight()
-    turtle.turnRight()
-    self.direction = (self.direction + 1) % 4
-    hook:call("moveHelper.onDirectionChanged", self.direction)
+    if turtle.turnRight() then
+        self.direction = (self.direction + 1) % 4
+        hook:call("moveHelper.onDirectionChanged", self.direction)
+        return true
+    end
+    return false
 end
 
+---@return boolean
 function moveHelper:turnAround()
-    turtle.turnLeft()
-    turtle.turnLeft()
-    self.direction = (self.direction + 2) % 4
-    hook:call("moveHelper.onDirectionChanged", self.direction)
+    return self:turnLeft() and self:turnLeft()
 end
 
 ---@param dir moveHelper.directions
@@ -72,20 +78,22 @@ function moveHelper:getQuickTurn(dir)
 end
 
 ---@param dir moveHelper.directions
+---@return boolean
 function moveHelper:turnTo(dir)
     if dir < 0 or dir > 3 then
         error("Invalid direction: " .. dir, 2)
-        return
+        return false
     end
 
     local turn = self:getQuickTurn(dir)
     if turn == moveHelper.turns.left then
-        self:turnLeft()
+        return self:turnLeft()
     elseif turn == moveHelper.turns.right then
-        self:turnRight()
+        return self:turnRight()
     elseif turn == moveHelper.turns.around then
-        self:turnAround()
+        return self:turnAround()
     end
+    return true
 end
 
 ---@return string
@@ -172,41 +180,39 @@ function moveHelper:moveTo(vec3)
     end
 
     while self.position.y < vec3.y do
-        self:up()
+        if not self:up() then break end
         sleep(0)
     end
 
     while self.position.y > vec3.y do
-        self:down()
+        if not self:down() then break end
         sleep(0)
     end
 
     while self.position.x ~= vec3.x or self.position.z ~= vec3.z do
         if self.position.x < vec3.x then
             while self.direction ~= self.directions.east do
-                self:turnTo(self.directions.east)
+                if not self:turnTo(self.directions.east) then break end
                 sleep(0)
             end
-            self:forward()
         elseif self.position.x > vec3.x then
             while self.direction ~= self.directions.west do
-                self:turnTo(self.directions.west)
+                if not self:turnTo(self.directions.west) then break end
                 sleep(0)
             end
-            self:forward()
         elseif self.position.z < vec3.z then
             while self.direction ~= self.directions.north do
-                self:turnTo(self.directions.north)
+                if not self:turnTo(self.directions.north) then break end
                 sleep(0)
             end
-            self:forward()
         elseif self.position.z > vec3.z then
             while self.direction ~= self.directions.south do
-                self:turnTo(self.directions.south)
+                if not self:turnTo(self.directions.south) then break end
                 sleep(0)
             end
-            self:forward()
         end
+
+        if not self:forward() then break end
         sleep(0)
     end
 
