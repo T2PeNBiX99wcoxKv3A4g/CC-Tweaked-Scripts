@@ -1,12 +1,6 @@
 ---@class moveHelper
 local moveHelper = {}
 
----@type vec3
-moveHelper.position = vec3:zero()
---- 0 = north, 1 = east, 2 = south, 3 = west
----@type number
-moveHelper.direction = 0
-
 ---@enum moveHelper.directions
 moveHelper.directions = {
     north = 0,
@@ -31,6 +25,15 @@ moveHelper.turns = {
 ---      0
 ---3   M   1
 ---      2
+
+---Will never be use and replace with instance table
+---@type vec3
+moveHelper.position = nil
+--- 0 = north, 1 = east, 2 = south, 3 = west
+---@type number
+moveHelper.direction = nil
+---@type mine|destroyer
+moveHelper.mainClass = nil
 
 ---@return boolean
 function moveHelper:turnLeft()
@@ -107,7 +110,7 @@ end
 
 ---@return boolean
 function moveHelper:forward()
-    refuelHelper:tryRefuel()
+    self.mainClass.refuelHelper:tryRefuel()
     self:dig()
     if turtle.forward() then
         if self.direction == self.directions.north then
@@ -127,7 +130,7 @@ end
 
 ---@return boolean
 function moveHelper:back()
-    refuelHelper:tryRefuel()
+    self.mainClass.refuelHelper:tryRefuel()
     if turtle.back() then
         if self.direction == self.directions.north then
             self.position = self.position:addZ(-1)
@@ -146,7 +149,7 @@ end
 
 ---@return boolean
 function moveHelper:up()
-    refuelHelper:tryRefuel()
+    self.mainClass.refuelHelper:tryRefuel()
     self:digUp()
     if turtle.up() then
         self.position = self.position:addY(1)
@@ -158,7 +161,7 @@ end
 
 ---@return boolean
 function moveHelper:down()
-    refuelHelper:tryRefuel()
+    self.mainClass.refuelHelper:tryRefuel()
     self:digDown()
     if turtle.down() then
         self.position = self.position:addY(-1)
@@ -240,5 +243,33 @@ function moveHelper:digDown()
     turtle.digDown()
     return true
 end
+
+local metaTable = {}
+
+---@param mainClass mine|destroyer
+---@return moveHelper
+function metaTable:__call(mainClass)
+    assert(mainClass, "mainClass is nil")
+    local obj = {
+        position = vec3:zero(),
+        direction = moveHelper.directions.north,
+        mainClass = mainClass
+    }
+    local objMetaTable = { __index = moveHelper }
+
+    function objMetaTable:__newindex(key, value)
+        error("Attempt to modify read-only table", 2)
+    end
+
+    setmetatable(obj, objMetaTable)
+
+    return obj
+end
+
+function metaTable:__newindex(key, value)
+    error("Attempt to modify read-only table", 2)
+end
+
+setmetatable(moveHelper, metaTable)
 
 return moveHelper

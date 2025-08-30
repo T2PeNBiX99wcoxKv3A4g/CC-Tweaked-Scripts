@@ -8,27 +8,33 @@ refuelHelper.status = {
     outOfFuel = 2
 }
 
----@type refuelHelper.status
-refuelHelper.currentStatus = refuelHelper.status.idle
-
 ---@type table<string, boolean>
 refuelHelper.coalList = {
     ["minecraft:coal"] = true,
     ["minecraft:coal_block"] = true,
     ["minecraft:charcoal"] = true,
     ["minecraft:charcoal_block"] = true,
+    ["minecraft:lava_bucket"] = true,
     ["aether:ambrosium_shard"] = true,
     ["aether:ambrosium_block"] = true
 }
+
+---Will never be use and replace with instance table
+---@type refuelHelper.status
+refuelHelper.currentStatus = nil
+---@type number
+refuelHelper.lowFuelLevel = nil
+---@type number
+refuelHelper.maxRefuelLevel = nil
 
 ---@return nil
 function refuelHelper:tryRefuel()
     local fuelLevel = turtle.getFuelLevel()
     logHelper.fuelLevel(fuelLevel)
-    if fuelLevel == "unlimited" or (fuelLevel > 100 and self.currentStatus == self.status.idle) then return end
+    if fuelLevel == "unlimited" or (fuelLevel > self.lowFuelLevel and self.currentStatus == self.status.idle) then return end
 
     if self.currentStatus == self.status.idle then
-        self.currentStatus = refuelHelper.status.refueling
+        self.currentStatus = self.status.refueling
     end
 
     for slot = 1, 16 do
@@ -41,8 +47,8 @@ function refuelHelper:tryRefuel()
                 turtle.refuel(1)
                 logHelper.fuelMassage(string.format("Refueled with %s. Current fuel level: %s", item.name, fuelLevel))
 
-                if fuelLevel > 1000 then
-                    self.currentStatus = refuelHelper.status.idle
+                if fuelLevel > self.maxRefuelLevel then
+                    self.currentStatus = self.status.idle
                     return
                 end
                 sleep(0)
@@ -51,17 +57,45 @@ function refuelHelper:tryRefuel()
     end
 
     local fuelLevel = turtle.getFuelLevel()
-    if fuelLevel > 100 then
-        self.currentStatus = refuelHelper.status.idle
+    if fuelLevel > self.lowFuelLevel then
+        self.currentStatus = self.status.idle
         return
     end
 
     logHelper.fuelError("Out of fuel! Please add coal to the turtle.")
-    self.currentStatus = refuelHelper.status.outOfFuel
+    self.currentStatus = self.status.outOfFuel
     while true do
         sleep(10)
         self:tryRefuel()
     end
 end
+
+local metaTable = {}
+
+---@param lowFuelLevel number
+---@param maxRefuelLevel number
+---@return refuelHelper
+function metaTable:__call(lowFuelLevel, maxRefuelLevel)
+    local obj = {
+        currentStatus = refuelHelper.status.idle,
+        lowFuelLevel = lowFuelLevel or 100,
+        maxRefuelLevel = maxRefuelLevel or 1000
+    }
+    local objMetaTable = { __index = refuelHelper }
+
+    function objMetaTable:__newindex(key, value)
+        error("Attempt to modify read-only table", 2)
+    end
+
+    setmetatable(obj, objMetaTable)
+
+    return obj
+end
+
+function metaTable:__newindex(key, value)
+    error("Attempt to modify read-only table", 2)
+end
+
+setmetatable(refuelHelper, metaTable)
 
 return refuelHelper

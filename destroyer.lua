@@ -34,6 +34,10 @@ destroyer.currentStatus = destroyer.status.idle
 destroyer.saveHelper = fileHelper(fileHelper.type.save, "destroyer_save.json")
 ---@type fileHelper
 destroyer.dataHelper = fileHelper(fileHelper.type.data, "destroyer_config.json")
+---@type refuelHelper
+destroyer.refuelHelper = refuelHelper(100, 3000)
+---@type moveHelper
+destroyer.moveHelper = moveHelper(destroyer)
 
 ---@param size number
 ---@param height number
@@ -84,20 +88,24 @@ function destroyer:move()
     local movePos = self.steps[step]
     logHelper.progress(string.format("Step %d/%d: {x: %d, y: %d, z: %d}", step, #self.steps, movePos.x, movePos.y,
         movePos.z))
-    moveHelper:moveTo(movePos)
+    self.moveHelper:moveTo(movePos)
     self.currentStep = self.currentStep + 1
     self:save()
 end
 
 ---@return nil
-function destroyer:backToStart()
-    moveHelper:moveTo(self.initPos)
-    moveHelper:turnTo(self.initDirection)
+function destroyer:backToStartPos()
+    self.moveHelper:moveTo(self.initPos)
+end
+
+---@return nil
+function destroyer:turnToStartDirection()
+    self.moveHelper:turnTo(self.initDirection)
 end
 
 ---@return nil
 function destroyer:dropItemToChest()
-    moveHelper:turnTo(moveHelper.directions.south)
+    self.moveHelper:turnTo(moveHelper.directions.south)
 
     for i = 1, 16 do
         local item = turtle.getItemDetail(i)
@@ -121,23 +129,23 @@ destroyer.statusTick = {
         self:move()
     end,
     [destroyer.status.tempBacking] = function(self)
-        self:backToStart()
+        self:backToStartPos()
         self:dropItemToChest()
         self.currentStatus = self.status.mining
         logHelper.massage("Items dropped to chest. Resuming mining...")
     end,
     [destroyer.status.backingFinished] = function(self)
-        self:backToStart()
+        self:backToStartPos()
         self:dropItemToChest()
-        self:backToStart()
+        self:turnToStartDirection()
         self.currentStatus = self.status.finished
         self:deleteSave()
         logHelper.massage("Returned to start position. Mining operation finished.")
     end,
     [destroyer.status.backingUnfinished] = function(self)
-        self:backToStart()
+        self:backToStartPos()
         self:dropItemToChest()
-        self:backToStart()
+        self:turnToStartDirection()
         self.currentStatus = self.status.unfinished
         self:deleteSave()
         logHelper.error("Returned to start position. Mining operation unfinished due to lack of fuel.")
@@ -145,7 +153,7 @@ destroyer.statusTick = {
 }
 
 function destroyer:tick()
-    if refuelHelper.currentStatus == refuelHelper.status.outOfFuel then
+    if self.refuelHelper.currentStatus == refuelHelper.status.outOfFuel then
         self.currentStatus = self.status.backingUnfinished
         logHelper.error("Out of fuel! Returning to start position...")
     end
@@ -160,8 +168,8 @@ function destroyer:save()
     local data = {
         initPos = self.initPos:copy(),
         initDirection = self.initDirection,
-        position = moveHelper.position:copy(),
-        direction = moveHelper.direction,
+        position = self.moveHelper.position:copy(),
+        direction = self.moveHelper.direction,
         steps = self.steps,
         currentStep = self.currentStep,
         currentStatus = self.currentStatus
@@ -183,8 +191,8 @@ function destroyer:load()
 
     self.initPos = vec3:formTable(data.initPos) or vec3:zero()
     self.initDirection = data.initDirection
-    moveHelper.position = vec3:formTable(data.position)
-    moveHelper.direction = data.direction
+    self.moveHelper.position = vec3:formTable(data.position) or vec3:zero()
+    self.moveHelper.direction = data.direction
 
     local newSteps = {}
 
@@ -223,8 +231,8 @@ function destroyer:init()
     if self:load() then
         logHelper.massage("Loaded previous state. Resuming mining operation...")
     else
-        self.initPos = moveHelper.position:copy()
-        self.initDirection = moveHelper.direction
+        self.initPos = self.moveHelper.position:copy()
+        self.initDirection = self.moveHelper.direction
 
         local config = self.dataHelper:load()
 

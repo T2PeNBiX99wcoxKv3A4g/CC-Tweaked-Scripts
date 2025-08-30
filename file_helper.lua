@@ -60,6 +60,7 @@ local metaTable = {}
 ---@param fileName string
 ---@return fileHelper
 function metaTable:__call(folder, fileName)
+    assert(fileName, "File name is nil")
     if type(folder) == "number" then
         if fileHelper.typeArray[folder + 1] then
             folder = fileHelper.typeArray[folder + 1]
