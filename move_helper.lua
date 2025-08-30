@@ -179,7 +179,7 @@ function moveHelper:moveTo(vec3)
         return false
     end
 
-    if self.position:equals(vec3) then
+    if self.position == vec3 then
         return true
     end
 

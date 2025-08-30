@@ -250,18 +250,56 @@ function metaTable:__call(x, y, z)
     return obj
 end
 
+---@return string
 function metaTable:__tostring()
     return string.format("Vec3(%s, %s, %s)", self.x, self.y, self.z)
 end
 
 ---@param other vec3
+---@return vec3
 function metaTable:__add(other)
     return vec3(self.x + other.x, self.y + other.y, self.z + other.z)
 end
 
 ---@param other vec3
+---@return vec3
 function metaTable:__sub(other)
     return vec3(self.x - other.x, self.y - other.y, self.z - other.z)
+end
+
+---@param other vec3
+---@return vec3
+function metaTable:__mul(other)
+    return vec3(self.x * other.x, self.y * other.y, self.z * other.z)
+end
+
+---@param other vec3
+---@return vec3
+function metaTable:__div(other)
+    return vec3(self.x / other.x, self.y / other.y, self.z / other.z)
+end
+
+---@return vec3
+function metaTable:__unm()
+    return vec3(-self.x, -self.y, -self.z)
+end
+
+---@param other vec3
+---@return boolean
+function metaTable:__eq(other)
+    return self.x == other.x and self.y == other.y and self.z == other.z
+end
+
+---@param other vec3
+---@return boolean
+function metaTable:__lt(other)
+    return self.x < other.x and self.y < other.y and self.z < other.z
+end
+
+---@param other vec3
+---@return boolean
+function metaTable:__le(other)
+    return self.x <= other.x and self.y <= other.y and self.z <= other.z
 end
 
 function metaTable:__newindex(key, value)
