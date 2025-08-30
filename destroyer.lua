@@ -54,7 +54,7 @@ function destroyer:mine2DAreaPath(size, height, x)
         if a.y == b.y then
             return a.z < b.z
         end
-        return a.y > b.y
+        return a.y < b.y
     end)
 
     return points

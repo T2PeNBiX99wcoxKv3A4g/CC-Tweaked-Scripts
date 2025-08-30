@@ -61,8 +61,8 @@ local metaTable = {}
 ---@return fileHelper
 function metaTable:__call(folder, fileName)
     if type(folder) == "number" then
-        if fileHelper.typeArray[folder] then
-            folder = fileHelper.typeArray[folder]
+        if fileHelper.typeArray[folder + 1] then
+            folder = fileHelper.typeArray[folder + 1]
         else
             folder = "saves"
         end

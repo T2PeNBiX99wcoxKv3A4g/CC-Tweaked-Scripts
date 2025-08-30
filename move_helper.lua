@@ -99,8 +99,8 @@ end
 
 ---@return string
 function moveHelper:getDirectionName()
-    if moveHelper.directionsArray[self.direction] then
-        return moveHelper.directionsArray[self.direction]
+    if moveHelper.directionsArray[self.direction + 1] then
+        return moveHelper.directionsArray[self.direction + 1]
     end
     return "unknown"
 end
