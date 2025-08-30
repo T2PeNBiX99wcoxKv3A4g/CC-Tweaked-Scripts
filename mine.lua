@@ -126,13 +126,17 @@ function Mine:tick()
     elseif self.currentStatus == self.status.tempBacking then
         self:backToStart()
         self:dropItemToChest()
-        LogHelper.massage("Items dropped to chest. Resuming mining...")
         self.currentStatus = self.status.mining
+        LogHelper.massage("Items dropped to chest. Resuming mining...")
     elseif self.currentStatus == self.status.backingFinished then
+        self:backToStart()
+        self:dropItemToChest()
         self:backToStart()
         self.currentStatus = self.status.finished
         LogHelper.massage("Returned to start position. Mining operation finished.")
     elseif self.currentStatus == self.status.backingUnfinished then
+        self:backToStart()
+        self:dropItemToChest()
         self:backToStart()
         self.currentStatus = self.status.unfinished
         LogHelper.error("Returned to start position. Mining operation unfinished due to lack of fuel.")
