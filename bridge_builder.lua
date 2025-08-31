@@ -150,10 +150,7 @@ end
 ---@type table<bridgeBuilder.status, fun(self: bridgeBuilder)>
 bridgeBuilder.statusTick = {
     [bridgeBuilder.status.building] = function(self)
-        if not self:checkInventory() then
-            return
-        end
-
+        if not self:checkInventory() then return end
         if turtle.detect() then
             self:placeBlock()
             self.currentStatus = self.status.backingFinished
