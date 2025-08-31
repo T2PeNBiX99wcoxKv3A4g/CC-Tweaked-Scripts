@@ -12,6 +12,11 @@ bridgeBuilder.status = {
     unfinished = 6
 }
 
+---@type table<string, boolean>
+bridgeBuilder.skipBlocks = {
+    ["minecraft:grass"] = true
+}
+
 ---@type vec3
 bridgeBuilder.initPos = vec3(0, 0, 0)
 ---@type moveHelper.directions
@@ -27,7 +32,6 @@ bridgeBuilder.refuelHelper = refuelHelper()
 ---@type moveHelper
 bridgeBuilder.moveHelper = moveHelper(bridgeBuilder)
 
----@return nil
 function bridgeBuilder:move()
     self.moveHelper:forward()
 
@@ -38,22 +42,18 @@ function bridgeBuilder:move()
     self:save()
 end
 
----@return nil
 function bridgeBuilder:backToStartPos()
     self.moveHelper:moveTo(self.initPos)
 end
 
----@return nil
 function bridgeBuilder:turnToStartDirection()
     self.moveHelper:turnTo(self.initDirection)
 end
 
----@return nil
 function bridgeBuilder:backToProgressPosition()
     self.moveHelper:moveTo(self.progressPosition or self.initPos)
 end
 
----@return nil
 function bridgeBuilder:dropItemToChest()
     self.moveHelper:turnTo(moveHelper.directions.south)
 
@@ -78,8 +78,8 @@ function bridgeBuilder:searchBlockInsideChest()
         if self:checkInventoryIsFull() then
             return blockCount > 0
         end
+        turtle.suck()
         if not self.refuelHelper:isFuelItem(item.name) then
-            turtle.suck()
             blockCount = blockCount + 1
         end
     end
@@ -121,7 +121,6 @@ function bridgeBuilder:checkInventory()
     return false
 end
 
----@return nil
 function bridgeBuilder:placeBlock()
     if turtle.detectDown() then return end
 
@@ -146,8 +145,9 @@ end
 bridgeBuilder.statusTick = {
     [bridgeBuilder.status.building] = function(self)
         if not self:checkInventory() then return end
-        if turtle.detect() then
-            self:placeBlock()
+        local hasBlock, blockData = turtle.inspect()
+
+        if hasBlock and blockData and not self.skipBlocks[blockData.name] then
             self.currentStatus = self.status.backingFinished
             logHelper.massage("Mining complete! Returning to start position...")
             return
