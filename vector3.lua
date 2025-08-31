@@ -223,7 +223,7 @@ end
 
 ---@param vecTable table
 ---@return vec3|nil
-function vec3:formTable(vecTable)
+function vec3:fromTable(vecTable)
     if not vecTable.x or not vecTable.y or not vecTable.z then return nil end
     return vec3(vecTable.x, vecTable.y, vecTable.z)
 end
