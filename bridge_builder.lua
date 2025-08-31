@@ -71,17 +71,13 @@ end
 ---@return boolean
 function bridgeBuilder:searchBlockInsideChest()
     local inventory = peripheral.find("inventory")
-    logHelper.debugMassage("searchBlockInsideChest 1")
     if not inventory then return false end
-
-    logHelper.debugMassage("searchBlockInsideChest 2")
-
     local inventoryName = peripheral.getName(inventory)
     local blockCount = 0
 
     for slot, item in pairs(inventory.list()) do
         logHelper.debugMassage(("%d x %s in slot %d"):format(item.count, item.name, slot))
-        if self:checkInventoryHaveSpace() then
+        if self:checkInventoryIsFull() then
             return blockCount > 0
         end
         if not self.refuelHelper:isFuelItem(item.name) then
@@ -93,17 +89,17 @@ function bridgeBuilder:searchBlockInsideChest()
 end
 
 ---@return boolean
-function bridgeBuilder:checkInventoryHaveSpace()
-    local hasSpace = false
+function bridgeBuilder:checkInventoryIsFull()
+    local isFull = true
 
     for i = 1, 16 do
         if turtle.getItemCount(i) < 1 then
-            hasSpace = true
+            isFull = false
             break
         end
     end
 
-    return hasSpace
+    return isFull
 end
 
 ---@return boolean
