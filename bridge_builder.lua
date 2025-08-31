@@ -105,7 +105,7 @@ function bridgeBuilder:checkInventoryHaveSpace()
     return hasSpace
 end
 
----@return nil
+---@return boolean
 function bridgeBuilder:checkInventory()
     local hasBlock = false
 
@@ -120,9 +120,10 @@ function bridgeBuilder:checkInventory()
         end
     end
 
-    if hasBlock then return end
+    if hasBlock then return true end
     logHelper.warning("Need more block to build, Temporarily returning to start position to pickup blocks...")
     self.currentStatus = self.status.tempBacking
+    return false
 end
 
 ---@return nil
@@ -149,7 +150,9 @@ end
 ---@type table<bridgeBuilder.status, fun(self: bridgeBuilder)>
 bridgeBuilder.statusTick = {
     [bridgeBuilder.status.building] = function(self)
-        self:checkInventory()
+        if not self:checkInventory() then
+            return
+        end
 
         if turtle.detect() then
             self:placeBlock()
@@ -163,7 +166,9 @@ bridgeBuilder.statusTick = {
     end,
     [bridgeBuilder.status.tempBacking] = function(self)
         self:backToStartPos()
-        if self:searchBlockInsideChest() then
+        local ret = self:searchBlockInsideChest()
+        logHelper.debugMassage("self:searchBlockInsideChest return: " .. ret)
+        if ret then
             self:backToProgressPosition()
             self.currentStatus = self.status.building
             logHelper.massage("Pick blocks from chest. Resuming building...")
