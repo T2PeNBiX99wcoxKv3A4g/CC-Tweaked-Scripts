@@ -1,15 +1,13 @@
 local pickUp = {}
 
 function pickUp:init()
+    turtle.turnLeft()
+    turtle.turnLeft()
+
     local test = peripheral.find("inventory")
     if not test then return end
 
-    local items = test.list()
-
-    turtle.turnLeft()
-    turtle.turnLeft()
-
-    for slot, item in pairs(items) do
+    for slot, item in pairs(test.list()) do
         print(("%d x %s in slot %d"):format(item.count, item.name, slot))
         turtle.suck()
     end
