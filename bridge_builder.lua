@@ -50,7 +50,7 @@ end
 
 ---@return nil
 function bridgeBuilder:backToProgressPosition()
-    self.moveHelper:moveTo(self.progressPosition)
+    self.moveHelper:moveTo(self.progressPosition or self.initPos)
 end
 
 ---@return nil
