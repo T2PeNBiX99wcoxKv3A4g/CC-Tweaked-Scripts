@@ -109,7 +109,7 @@ function destroyer:dropItemToChest()
 
     for i = 1, 16 do
         local item = turtle.getItemDetail(i)
-        if item and not refuelHelper.coalList[item.name] then
+        if item and not self.refuelHelper:isFuelItem(item.name) then
             turtle.select(i)
             turtle.drop(item.count)
         end
@@ -189,15 +189,15 @@ function destroyer:load()
         return false
     end
 
-    self.initPos = vec3:formTable(data.initPos) or vec3:zero()
+    self.initPos = vec3:fromTable(data.initPos) or vec3:zero()
     self.initDirection = data.initDirection
-    self.moveHelper.position = vec3:formTable(data.position) or vec3:zero()
+    self.moveHelper.position = vec3:fromTable(data.position) or vec3:zero()
     self.moveHelper.direction = data.direction
 
     local newSteps = {}
 
     for index, value in ipairs(data.steps) do
-        newSteps[index] = vec3:formTable(value)
+        newSteps[index] = vec3:fromTable(value)
     end
 
     self.steps = newSteps

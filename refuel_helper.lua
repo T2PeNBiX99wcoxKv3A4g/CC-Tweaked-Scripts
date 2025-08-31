@@ -9,7 +9,7 @@ refuelHelper.status = {
 }
 
 ---@type table<string, boolean>
-refuelHelper.coalList = {
+refuelHelper.fuelList = {
     ["minecraft:coal"] = true,
     ["minecraft:coal_block"] = true,
     ["minecraft:charcoal"] = true,
@@ -27,6 +27,15 @@ refuelHelper.lowFuelLevel = nil
 ---@type number
 refuelHelper.maxRefuelLevel = nil
 
+---@param itemName string
+---@return boolean
+function refuelHelper:isFuelItem(itemName)
+    if refuelHelper.fuelList[itemName] then
+        return true
+    end
+    return false
+end
+
 ---@return nil
 function refuelHelper:tryRefuel()
     local fuelLevel = turtle.getFuelLevel()
@@ -40,7 +49,7 @@ function refuelHelper:tryRefuel()
     for slot = 1, 16 do
         local item = turtle.getItemDetail(slot)
 
-        if item and self.coalList[item.name] then
+        if item and self:isFuelItem(item.name) then
             turtle.select(slot)
             while turtle.getItemCount(slot) > 0 do
                 local fuelLevel = turtle.getFuelLevel()
