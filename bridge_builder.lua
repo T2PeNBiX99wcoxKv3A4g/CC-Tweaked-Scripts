@@ -222,14 +222,14 @@ function bridgeBuilder:load()
         self:deleteSave()
         return false
     end
-    if not data.initPos or not data.initDirection or not data.progressPosition or not data.position or not data.direction or not data.currentStatus then
+    if not data.initPos or not data.initDirection or not data.position or not data.direction or not data.currentStatus then
         self:deleteSave()
         return false
     end
 
     self.initPos = vec3:fromTable(data.initPos) or vec3:zero()
     self.initDirection = data.initDirection
-    self.progressPosition = vec3:fromTable(data.progressPosition)
+    self.progressPosition = data.progressPosition and vec3:fromTable(data.progressPosition) or nil
     self.moveHelper.position = vec3:fromTable(data.position) or vec3:zero()
     self.moveHelper.direction = data.direction
     self.currentStatus = data.currentStatus
