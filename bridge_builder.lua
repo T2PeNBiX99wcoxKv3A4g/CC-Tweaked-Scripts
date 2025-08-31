@@ -71,12 +71,16 @@ end
 ---@return boolean
 function bridgeBuilder:searchBlockInsideChest()
     local inventory = peripheral.find("inventory")
+    logHelper.debugMassage("searchBlockInsideChest 1")
     if not inventory then return false end
+
+    logHelper.debugMassage("searchBlockInsideChest 2")
 
     local inventoryName = peripheral.getName(inventory)
     local blockCount = 0
 
     for slot, item in pairs(inventory.list()) do
+        logHelper.debugMassage(("%d x %s in slot %d"):format(item.count, item.name, slot))
         if self:checkInventoryHaveSpace() then
             return blockCount > 0
         end
@@ -160,8 +164,7 @@ bridgeBuilder.statusTick = {
     end,
     [bridgeBuilder.status.tempBacking] = function(self)
         self:backToStartPos()
-        local ret = self:searchBlockInsideChest()
-        if ret then
+        if self:searchBlockInsideChest() then
             self:backToProgressPosition()
             self.currentStatus = self.status.building
             logHelper.massage("Pick blocks from chest. Resuming building...")
