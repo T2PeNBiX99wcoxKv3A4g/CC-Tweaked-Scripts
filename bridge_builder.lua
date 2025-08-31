@@ -72,7 +72,6 @@ end
 function bridgeBuilder:searchBlockInsideChest()
     local inventory = peripheral.find("inventory")
     if not inventory then return false end
-    local inventoryName = peripheral.getName(inventory)
     local blockCount = 0
 
     for slot, item in pairs(inventory.list()) do
@@ -81,7 +80,7 @@ function bridgeBuilder:searchBlockInsideChest()
             return blockCount > 0
         end
         if not self.refuelHelper:isFuelItem(item.name) then
-            inventory.pullItems(inventoryName, slot)
+            turtle.suck()
             blockCount = blockCount + 1
         end
     end
@@ -160,7 +159,9 @@ bridgeBuilder.statusTick = {
     end,
     [bridgeBuilder.status.tempBacking] = function(self)
         self:backToStartPos()
+        self.moveHelper:turnTo(moveHelper.directions.south)
         if self:searchBlockInsideChest() then
+            self:turnToStartDirection()
             self:backToProgressPosition()
             self.currentStatus = self.status.building
             logHelper.massage("Pick blocks from chest. Resuming building...")
