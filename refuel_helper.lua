@@ -74,8 +74,9 @@ function refuelHelper:tryRefuel()
     logHelper.fuelError("Out of fuel! Please add coal to the turtle.")
     self.currentStatus = self.status.outOfFuel
     while true do
-        sleep(10)
+        if fuelLevel == "unlimited" or (fuelLevel > self.lowFuelLevel and self.currentStatus == self.status.idle) then break end
         self:tryRefuel()
+        sleep(0)
     end
 end
 
