@@ -147,7 +147,7 @@ bridgeBuilder.statusTick = {
         if not self:checkInventory() then return end
         local hasBlock, blockData = turtle.inspect()
 
-        if hasBlock and blockData and not self.skipBlocks[blockData.name] then
+        if turtle.detect() and hasBlock and blockData and not self.skipBlocks[blockData.name] then
             self.currentStatus = self.status.backingFinished
             logHelper.massage("Mining complete! Returning to start position...")
             return
