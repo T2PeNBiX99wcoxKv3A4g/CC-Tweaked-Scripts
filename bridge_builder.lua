@@ -207,7 +207,7 @@ function bridgeBuilder:save()
     local data = {
         initPos = self.initPos:copy(),
         initDirection = self.initDirection,
-        progressPosition = self.progressPosition:copy(),
+        progressPosition = self.progressPosition and self.progressPosition:copy() or nil,
         position = self.moveHelper.position:copy(),
         direction = self.moveHelper.direction,
         currentStatus = self.currentStatus
