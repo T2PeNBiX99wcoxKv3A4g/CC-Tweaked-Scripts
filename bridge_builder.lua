@@ -75,7 +75,6 @@ function bridgeBuilder:searchBlockInsideChest()
     local blockCount = 0
 
     for slot, item in pairs(inventory.list()) do
-        logHelper.debugMassage(("%d x %s in slot %d"):format(item.count, item.name, slot))
         if self:checkInventoryIsFull() then
             return blockCount > 0
         end
