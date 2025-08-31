@@ -179,6 +179,98 @@ vec3.subXInPlace = vec3.subtractXInPlace
 vec3.subYInPlace = vec3.subtractYInPlace
 vec3.subZInPlace = vec3.subtractZInPlace
 
+---@param other vec3
+---@return vec3
+function vec3:multiply(other)
+    return vec3(self.x * other.x, self.y * other.y, self.z * other.z)
+end
+
+---@param other vec3
+function vec3:multiplyInPlace(other)
+    self.x = self.x * other.x
+    self.y = self.y * other.y
+    self.z = self.z * other.z
+end
+
+---@param x number
+---@return vec3
+function vec3:multiplyX(x)
+    return vec3(self.x * x, self.y, self.z)
+end
+
+---@param y number
+---@return vec3
+function vec3:multiplyY(y)
+    return vec3(self.x, self.y * y, self.z)
+end
+
+---@param z number
+---@return vec3
+function vec3:multiplyZ(z)
+    return vec3(self.x, self.y, self.z * z)
+end
+
+---@param x number
+function vec3:multiplyXInPlace(x)
+    self.x = self.x * x
+end
+
+---@param y number
+function vec3:multiplyYInPlace(y)
+    self.y = self.y * y
+end
+
+---@param z number
+function vec3:multiplyZInPlace(z)
+    self.z = self.z * z
+end
+
+---@param other vec3
+---@return vec3
+function vec3:divide(other)
+    return vec3(self.x / other.x, self.y / other.y, self.z / other.z)
+end
+
+---@param other vec3
+function vec3:divideInPlace(other)
+    self.x = self.x / other.x
+    self.y = self.y / other.y
+    self.z = self.z / other.z
+end
+
+---@param x number
+---@return vec3
+function vec3:divideX(x)
+    return vec3(self.x / x, self.y, self.z)
+end
+
+---@param y number
+---@return vec3
+function vec3:divideY(y)
+    return vec3(self.x, self.y / y, self.z)
+end
+
+---@param z number
+---@return vec3
+function vec3:divideZ(z)
+    return vec3(self.x, self.y, self.z / z)
+end
+
+---@param x number
+function vec3:divideXInPlace(x)
+    self.x = self.x / x
+end
+
+---@param y number
+function vec3:divideYInPlace(y)
+    self.y = self.y / y
+end
+
+---@param z number
+function vec3:divideZInPlace(z)
+    self.z = self.z / z
+end
+
 ---@return vec3
 function vec3:normalize()
     local len = self:length()
@@ -228,6 +320,14 @@ function vec3:fromTable(vecTable)
     return vec3(vecTable.x, vecTable.y, vecTable.z)
 end
 
+---@param obj vec3 | any
+---@return boolean
+function vec3.isVec3(obj)
+    return obj and obj.__type and obj.__type == "vec3" and not obj:isNil()
+end
+
+vec3.__type = "vec3"
+
 local metaTable = {}
 
 ---@param x number
@@ -246,68 +346,40 @@ function metaTable:__call(x, y, z)
         error("Trying to add invalid value to Vec3", 2)
     end
 
+    objMetaTable.__add = vec3.add
+    objMetaTable.__sub = vec3.sub
+    objMetaTable.__mul = vec3.multiply
+    objMetaTable.__div = vec3.divide
+    objMetaTable.__unm = vec3.negate
+    objMetaTable.__eq = vec3.equals
+
+    ---@return string
+    function objMetaTable:__tostring()
+        return string.format("Vec3(%s, %s, %s)", self.x, self.y, self.z)
+    end
+
+    ---@param other vec3
+    ---@return boolean
+    function objMetaTable:__lt(other)
+        return self.x < other.x and self.y < other.y and self.z < other.z
+    end
+
+    ---@param other vec3
+    ---@return boolean
+    function objMetaTable:__le(other)
+        return self.x <= other.x and self.y <= other.y and self.z <= other.z
+    end
+
+    function objMetaTable:__concat(other)
+        return tostring(self) .. tostring(other)
+    end
+
     setmetatable(obj, objMetaTable)
     return obj
 end
 
----@return string
-function metaTable:__tostring()
-    return string.format("Vec3(%s, %s, %s)", self.x, self.y, self.z)
-end
-
----@param other vec3
----@return vec3
-function metaTable:__add(other)
-    return vec3(self.x + other.x, self.y + other.y, self.z + other.z)
-end
-
----@param other vec3
----@return vec3
-function metaTable:__sub(other)
-    return vec3(self.x - other.x, self.y - other.y, self.z - other.z)
-end
-
----@param other vec3
----@return vec3
-function metaTable:__mul(other)
-    return vec3(self.x * other.x, self.y * other.y, self.z * other.z)
-end
-
----@param other vec3
----@return vec3
-function metaTable:__div(other)
-    return vec3(self.x / other.x, self.y / other.y, self.z / other.z)
-end
-
----@return vec3
-function metaTable:__unm()
-    return vec3(-self.x, -self.y, -self.z)
-end
-
----@param other vec3
----@return boolean
-function metaTable:__eq(other)
-    return self.x == other.x and self.y == other.y and self.z == other.z
-end
-
----@param other vec3
----@return boolean
-function metaTable:__lt(other)
-    return self.x < other.x and self.y < other.y and self.z < other.z
-end
-
----@param other vec3
----@return boolean
-function metaTable:__le(other)
-    return self.x <= other.x and self.y <= other.y and self.z <= other.z
-end
-
 function metaTable:__newindex(key, value)
     error("Attempt to modify read-only table", 2)
-end
-
-function metaTable:__concat(other)
-    return tostring(self) .. tostring(other)
 end
 
 setmetatable(vec3, metaTable)

@@ -63,10 +63,7 @@ end
 ---@param dir moveHelper.directions
 ---@return moveHelper.turns
 function moveHelper:getQuickTurn(dir)
-    if dir < 0 or dir > 3 then
-        error("Invalid direction: " .. dir, 2)
-        return moveHelper.turns.none
-    end
+    assert(dir > -1 and dir < 4, "Invalid direction: " .. dir)
 
     local diff = (dir - self.direction) % 4
     if diff == 0 then
@@ -84,10 +81,7 @@ end
 ---@param dir moveHelper.directions
 ---@return boolean
 function moveHelper:turnTo(dir)
-    if dir < 0 or dir > 3 then
-        error("Invalid direction: " .. dir, 2)
-        return false
-    end
+    assert(dir > -1 and dir < 4, "Invalid direction: " .. dir)
 
     local turn = self:getQuickTurn(dir)
     if turn == moveHelper.turns.left then
@@ -171,45 +165,42 @@ function moveHelper:down()
     return false
 end
 
----@param vec3 vec3 local pos
+---@param vector vec3 local pos
 ---@return boolean
-function moveHelper:moveTo(vec3)
-    if vec3:isNil() then
-        error("Invalid coordinates: " .. vec3, 2)
-        return false
-    end
+function moveHelper:moveTo(vector)
+    assert(vec3.isVec3(vector), "Invalid vector3: " .. vector)
 
-    if self.position == vec3 then
+    if self.position == vector then
         return true
     end
 
-    while self.position.y < vec3.y do
+    while self.position.y < vector.y do
         if not self:up() then break end
         sleep(0)
     end
 
-    while self.position.y > vec3.y do
+    while self.position.y > vector.y do
         if not self:down() then break end
         sleep(0)
     end
 
-    while self.position.x ~= vec3.x or self.position.z ~= vec3.z do
-        if self.position.x < vec3.x then
+    while self.position.x ~= vector.x or self.position.z ~= vector.z do
+        if self.position.x < vector.x then
             while self.direction ~= self.directions.east do
                 if not self:turnTo(self.directions.east) then break end
                 sleep(0)
             end
-        elseif self.position.x > vec3.x then
+        elseif self.position.x > vector.x then
             while self.direction ~= self.directions.west do
                 if not self:turnTo(self.directions.west) then break end
                 sleep(0)
             end
-        elseif self.position.z < vec3.z then
+        elseif self.position.z < vector.z then
             while self.direction ~= self.directions.north do
                 if not self:turnTo(self.directions.north) then break end
                 sleep(0)
             end
-        elseif self.position.z > vec3.z then
+        elseif self.position.z > vector.z then
             while self.direction ~= self.directions.south do
                 if not self:turnTo(self.directions.south) then break end
                 sleep(0)
