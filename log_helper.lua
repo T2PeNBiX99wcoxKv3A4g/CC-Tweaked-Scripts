@@ -79,4 +79,15 @@ function logHelper.fuelError(msg)
     term.clearLine()
 end
 
+---@param msg string
+function logHelper.debugMassage(msg)
+    term.setCursorPos(1, 7)
+    term.clearLine()
+    term.setTextColor(colors.green)
+    term.write(msg)
+    term.setTextColor(colors.white)
+    term.setCursorPos(1, 8)
+    term.clearLine()
+end
+
 return logHelper

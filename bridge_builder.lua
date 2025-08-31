@@ -71,16 +71,19 @@ end
 ---@return boolean
 function bridgeBuilder:searchBlockInsideChest()
     local inventory = peripheral.find("inventory")
+    logHelper.debugMassage("inventory: " .. inventory)
     if not inventory then return false end
 
     local inventoryName = peripheral.getName(inventory)
     local blockCount = 0
 
     for slot, item in pairs(inventory.list()) do
+        logHelper.debugMassage("self:checkInventoryHaveSpace(): " .. self:checkInventoryHaveSpace())
         if self:checkInventoryHaveSpace() then
             return blockCount > 0
         end
         if not self.refuelHelper:isFuelItem(item.name) then
+            logHelper.debugMassage("inventoryName: " .. inventoryName)
             inventory.pullItems(inventoryName, slot)
             blockCount = blockCount + 1
         end
@@ -270,6 +273,8 @@ function bridgeBuilder:init()
 
         logHelper.massage("Starting new building operation...")
     end
+
+    logHelper.title("Bridge Builder is running...")
 
     while true do
         if self.currentStatus == self.status.finished or self.currentStatus == self.status.unfinished then break end
