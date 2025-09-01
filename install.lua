@@ -34,6 +34,14 @@ local function downloadFIle(url, path)
     return false
 end
 
+local function deleteDownloadedJsonFiles()
+    for _, path in pairs(lastDownloadJsonFile) do
+        if fs.exists(path) then
+            fs.delete(path)
+        end
+    end
+end
+
 print("Start install script...")
 
 local success = downloadFIle(
@@ -80,6 +88,7 @@ end
 local args = { ... }
 
 if #args < 1 or not options[args[1]] then
+    deleteDownloadedJsonFiles()
     print(string.format("Please enter install script name! (%s)", table.concat(allOptions, ", ")))
     return
 end
@@ -127,10 +136,6 @@ for _, fileInfo in ipairs(fileInfos) do
     end
 end
 
-for _, path in pairs(lastDownloadJsonFile) do
-    if fs.exists(path) then
-        fs.delete(path)
-    end
-end
+deleteDownloadedJsonFiles()
 
 print(args[1] .. " script is installed!")
