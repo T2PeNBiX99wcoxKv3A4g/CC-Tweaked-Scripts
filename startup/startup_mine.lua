@@ -1,5 +1,7 @@
 -- Rename to startup.lua to run at startup
 
+package.path = package.path .. ";/?;/?.lua;/?/init.lua;/modules/?;/modules/?.lua;/modules/?/init.lua"
+
 ---@diagnostic disable: lowercase-global
 
 hook = require("modules.hook")
