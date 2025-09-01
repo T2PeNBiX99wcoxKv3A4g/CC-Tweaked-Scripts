@@ -1,5 +1,10 @@
+local expect = require("cc.expect").expect
+
+local class = require("modules.class")
+local logHelper = require("modules.log_helper")
+
 ---@class refuelHelper
-local refuelHelper = {}
+local refuelHelper = class("refuelHelper")
 
 ---@enum refuelHelper.status
 refuelHelper.status = {
@@ -75,32 +80,15 @@ function refuelHelper:tryRefuel()
     self.currentStatus = self.status.outOfFuel
 end
 
-local metaTable = {}
-
 ---@param lowFuelLevel number
 ---@param maxRefuelLevel number
----@return refuelHelper
-function metaTable:__call(lowFuelLevel, maxRefuelLevel)
-    local obj = {
-        currentStatus = refuelHelper.status.idle,
-        lowFuelLevel = lowFuelLevel or 100,
-        maxRefuelLevel = maxRefuelLevel or 1000
-    }
-    local objMetaTable = { __index = refuelHelper }
+function refuelHelper:init(lowFuelLevel, maxRefuelLevel)
+    expect(1, lowFuelLevel, "number")
+    expect(2, maxRefuelLevel, "number")
 
-    function objMetaTable:__newindex(key, value)
-        error("Attempt to modify read-only table", 2)
-    end
-
-    setmetatable(obj, objMetaTable)
-
-    return obj
+    self.currentStatus = refuelHelper.status.idle
+    self.lowFuelLevel = lowFuelLevel or 100
+    self.maxRefuelLevel = maxRefuelLevel or 1000
 end
-
-function metaTable:__newindex(key, value)
-    error("Attempt to modify read-only table", 2)
-end
-
-setmetatable(refuelHelper, metaTable)
 
 return refuelHelper

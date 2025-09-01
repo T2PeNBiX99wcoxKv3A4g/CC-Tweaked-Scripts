@@ -1,5 +1,11 @@
+local expect = require("cc.expect")
+local expect, range = expect.expect, expect.range
+
+local class = require("modules.class")
+local vec3 = require("modules.vector3")
+
 ---@class moveHelper
-local moveHelper = {}
+local moveHelper = class("moveHelper")
 
 ---@enum moveHelper.directions
 moveHelper.directions = {
@@ -39,7 +45,7 @@ moveHelper.mainClass = nil
 function moveHelper:turnLeft()
     if turtle.turnLeft() then
         self.direction = (self.direction - 1) % 4
-        hook:call("moveHelper.onDirectionChanged", self.direction)
+        hook.call("moveHelper.onDirectionChanged", self.direction)
         return true
     end
     return false
@@ -49,7 +55,7 @@ end
 function moveHelper:turnRight()
     if turtle.turnRight() then
         self.direction = (self.direction + 1) % 4
-        hook:call("moveHelper.onDirectionChanged", self.direction)
+        hook.call("moveHelper.onDirectionChanged", self.direction)
         return true
     end
     return false
@@ -63,7 +69,7 @@ end
 ---@param dir moveHelper.directions
 ---@return moveHelper.turns
 function moveHelper:getQuickTurn(dir)
-    assert(dir > -1 and dir < 4, "Invalid direction: " .. dir)
+    range(dir, 0, 3)
 
     local diff = (dir - self.direction) % 4
     if diff == 0 then
@@ -81,7 +87,7 @@ end
 ---@param dir moveHelper.directions
 ---@return boolean
 function moveHelper:turnTo(dir)
-    assert(dir > -1 and dir < 4, "Invalid direction: " .. dir)
+    range(dir, 0, 3)
 
     local turn = self:getQuickTurn(dir)
     if turn == moveHelper.turns.left then
@@ -116,7 +122,7 @@ function moveHelper:forward()
         elseif self.direction == self.directions.west then
             self.position = self.position:addX(-1)
         end
-        hook:call("moveHelper.onPositionChanged", self.position:copy())
+        hook.call("moveHelper.onPositionChanged", self.position:copy())
         return true
     end
     return false
@@ -135,7 +141,7 @@ function moveHelper:back()
         elseif self.direction == self.directions.west then
             self.position = self.position:addX(1)
         end
-        hook:call("moveHelper.onPositionChanged", self.position:copy())
+        hook.call("moveHelper.onPositionChanged", self.position:copy())
         return true
     end
     return false
@@ -147,7 +153,7 @@ function moveHelper:up()
     self:digUp()
     if turtle.up() then
         self.position = self.position:addY(1)
-        hook:call("moveHelper.onPositionChanged", self.position:copy())
+        hook.call("moveHelper.onPositionChanged", self.position:copy())
         return true
     end
     return false
@@ -159,7 +165,7 @@ function moveHelper:down()
     self:digDown()
     if turtle.down() then
         self.position = self.position:addY(-1)
-        hook:call("moveHelper.onPositionChanged", self.position:copy())
+        hook.call("moveHelper.onPositionChanged", self.position:copy())
         return true
     end
     return false
@@ -168,6 +174,8 @@ end
 ---@param vector vec3 local pos
 ---@return boolean
 function moveHelper:moveTo(vector)
+    ---@diagnostic disable-next-line: param-type-mismatch
+    expect(1, vector, "table")
     assert(vec3.isVec3(vector), "Invalid vector3: " .. vector)
 
     if self.position == vector then
@@ -235,32 +243,14 @@ function moveHelper:digDown()
     return true
 end
 
-local metaTable = {}
-
 ---@param mainClass mine|destroyer
----@return moveHelper
-function metaTable:__call(mainClass)
-    assert(mainClass, "mainClass is nil")
-    local obj = {
-        position = vec3:zero(),
-        direction = moveHelper.directions.north,
-        mainClass = mainClass
-    }
-    local objMetaTable = { __index = moveHelper }
+function moveHelper:init(mainClass)
+    ---@diagnostic disable-next-line: param-type-mismatch
+    expect(1, mainClass, "table")
 
-    function objMetaTable:__newindex(key, value)
-        error("Attempt to modify read-only table", 2)
-    end
-
-    setmetatable(obj, objMetaTable)
-
-    return obj
+    self.position = vec3:zero()
+    self.direction = moveHelper.directions.north
+    self.mainClass = mainClass
 end
-
-function metaTable:__newindex(key, value)
-    error("Attempt to modify read-only table", 2)
-end
-
-setmetatable(moveHelper, metaTable)
 
 return moveHelper

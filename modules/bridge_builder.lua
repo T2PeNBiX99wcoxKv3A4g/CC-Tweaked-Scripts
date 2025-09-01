@@ -1,5 +1,12 @@
+local class = require("modules.class")
+local vec3 = require("modules.vector3")
+local moveHelper = require("modules.move_helper")
+local fileHelper = require("modules.file_helper")
+local refuelHelper = require("modules.refuel_helper")
+local logHelper = require("modules.log_helper")
+
 ---@class bridgeBuilder
-local bridgeBuilder = {}
+local bridgeBuilder = class("bridgeBuilder")
 
 ---@enum bridgeBuilder.status
 bridgeBuilder.status = {
@@ -253,8 +260,8 @@ function bridgeBuilder:onPositionChanged(newPosition)
 end
 
 function bridgeBuilder:init()
-    hook:add("moveHelper.onDirectionChanged", self, self.onDirectionChanged)
-    hook:add("moveHelper.onPositionChanged", self, self.onPositionChanged)
+    hook.add("moveHelper.onDirectionChanged", self, self.onDirectionChanged)
+    hook.add("moveHelper.onPositionChanged", self, self.onPositionChanged)
 
     if self:load() then
         logHelper.massage("Loaded previous state. Resuming building operation...")

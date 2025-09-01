@@ -45,7 +45,7 @@ end
 print("Start install script...")
 
 local success = downloadFIle(
-    "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/install_options.json",
+    "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_options.json",
     "install_options.json")
 
 if not success then

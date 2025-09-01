@@ -1,0 +1,14 @@
+{
+    "mine": {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_mine.json",
+        "path": "install_mine.json"
+    },
+    "destroyer": {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_destroyer.json",
+        "path": "install_destroyer.json"
+    },
+    "bridge_builder": {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_bridge_builder.json",
+        "path": "install_bridge_builder.json"
+    }
+}

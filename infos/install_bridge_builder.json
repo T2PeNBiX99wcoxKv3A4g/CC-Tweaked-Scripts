@@ -1,0 +1,34 @@
+[
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/vector3.lua",
+        "path": "/modules/vector3.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/hook.lua",
+        "path": "/modules/hook.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/log_helper.lua",
+        "path": "/modules/log_helper.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/file_helper.lua",
+        "path": "/modules/file_helper.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/refuel_helper.lua",
+        "path": "/modules/refuel_helper.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/move_helper.lua",
+        "path": "/modules/move_helper.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/bridge_builder.lua",
+        "path": "/modules/bridge_builder.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/startup/startup_bridge_builder.lua",
+        "path": "/startup/99_bridge_builder.lua"
+    }
+]

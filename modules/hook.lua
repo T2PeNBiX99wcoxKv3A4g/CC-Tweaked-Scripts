@@ -2,35 +2,35 @@
 local hook = {}
 
 ---@type table<string, table<string|table, function>>
-hook.hooks = {}
+local hooks = {}
 
 ---@param event string
 ---@param id string|table
 ---@param func function
-function hook:add(event, id, func)
-    if not self.hooks[event] then
-        self.hooks[event] = {}
+function hook.add(event, id, func)
+    if not hooks[event] then
+        hooks[event] = {}
     end
-    self.hooks[event][id] = func
+    hooks[event][id] = func
 end
 
 ---@param event string
 ---@param id string|table
-function hook:remove(event, id)
-    if self.hooks[event] then
-        self.hooks[event][id] = nil
+function hook.remove(event, id)
+    if hooks[event] then
+        hooks[event][id] = nil
     end
 end
 
-function hook:clear()
-    self.hooks = {}
+function hook.clear()
+    hooks = {}
 end
 
 ---@param event string
 ---@param ... any
-function hook:call(event, ...)
-    if not self.hooks[event] then return end
-    for id, func in pairs(self.hooks[event]) do
+function hook.call(event, ...)
+    if not hooks[event] then return end
+    for id, func in pairs(hooks[event]) do
         if type(id) == "table" then
             func(id, ...)
         else

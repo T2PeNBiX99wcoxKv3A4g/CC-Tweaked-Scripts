@@ -1,5 +1,7 @@
+local class = require("modules.class")
+
 ---@class vec3
-local vec3 = {}
+local vec3 = class("vec3")
 
 ---Will never be use and replace with instance table
 ---@type number
@@ -328,60 +330,49 @@ end
 
 vec3.__type = "vec3"
 
-local metaTable = {}
+function vec3:__newindex(key, value)
+    if (key == "x" or key == "y" or key == "z") and type(value) == "number" then
+        rawset(self, key, value)
+        return
+    end
+    error("Trying to add invalid value to vec3", 2)
+end
+
+vec3.__add = vec3.add
+vec3.__sub = vec3.sub
+vec3.__mul = vec3.multiply
+vec3.__div = vec3.divide
+vec3.__unm = vec3.negate
+vec3.__eq = vec3.equals
+
+---@return string
+function vec3:__tostring()
+    return string.format("vec3(%s, %s, %s)", self.x, self.y, self.z)
+end
+
+---@param other vec3
+---@return boolean
+function vec3:__lt(other)
+    return self.x < other.x and self.y < other.y and self.z < other.z
+end
+
+---@param other vec3
+---@return boolean
+function vec3:__le(other)
+    return self.x <= other.x and self.y <= other.y and self.z <= other.z
+end
+
+function vec3:__concat(other)
+    return tostring(self) .. tostring(other)
+end
 
 ---@param x number
 ---@param y number
 ---@param z number
----@return vec3
-function metaTable:__call(x, y, z)
-    local obj = { x = x or 0, y = y or 0, z = z or 0 }
-    local objMetaTable = { __index = vec3 }
-
-    function objMetaTable:__newindex(key, value)
-        if (key == "x" or key == "y" or key == "z") and type(value) == "number" then
-            rawset(self, key, value)
-            return
-        end
-        error("Trying to add invalid value to Vec3", 2)
-    end
-
-    objMetaTable.__add = vec3.add
-    objMetaTable.__sub = vec3.sub
-    objMetaTable.__mul = vec3.multiply
-    objMetaTable.__div = vec3.divide
-    objMetaTable.__unm = vec3.negate
-    objMetaTable.__eq = vec3.equals
-
-    ---@return string
-    function objMetaTable:__tostring()
-        return string.format("Vec3(%s, %s, %s)", self.x, self.y, self.z)
-    end
-
-    ---@param other vec3
-    ---@return boolean
-    function objMetaTable:__lt(other)
-        return self.x < other.x and self.y < other.y and self.z < other.z
-    end
-
-    ---@param other vec3
-    ---@return boolean
-    function objMetaTable:__le(other)
-        return self.x <= other.x and self.y <= other.y and self.z <= other.z
-    end
-
-    function objMetaTable:__concat(other)
-        return tostring(self) .. tostring(other)
-    end
-
-    setmetatable(obj, objMetaTable)
-    return obj
+function vec3:init(x, y, z)
+    self.x = x or 0
+    self.y = y or 0
+    self.z = z or 0
 end
-
-function metaTable:__newindex(key, value)
-    error("Attempt to modify read-only table", 2)
-end
-
-setmetatable(vec3, metaTable)
 
 return vec3

@@ -1,5 +1,8 @@
+local class = require("modules.class")
+
 ---@class fileHelper
-local fileHelper = {}
+local fileHelper = class("fileHelper")
+local expect = require("cc.expect").expect
 
 ---@enum fileHelper.type
 fileHelper.type = {
@@ -16,6 +19,17 @@ fileHelper.typeArray = { "saves", "data" }
 fileHelper.folder = nil
 ---@type string
 fileHelper.fileName = nil
+
+---@param folderType fileHelper.type| string
+---@return string
+function fileHelper:folderTypeHandle(folderType)
+    if type(folderType) == "string" then return folderType end
+    if type(folderType) ~= "number" then return "saves" end
+    if fileHelper.typeArray[folderType + 1] then
+        return fileHelper.typeArray[folderType + 1]
+    end
+    return "saves"
+end
 
 ---@param data table
 ---@return boolean
@@ -54,37 +68,16 @@ function fileHelper:delete()
     return true
 end
 
-local metaTable = {}
-
----@param folder fileHelper.type|string|nil
+---@param folder fileHelper.type|string
 ---@param fileName string
----@return fileHelper
-function metaTable:__call(folder, fileName)
-    assert(fileName, "File name is nil")
-    if type(folder) == "number" then
-        if fileHelper.typeArray[folder + 1] then
-            folder = fileHelper.typeArray[folder + 1]
-        else
-            folder = "saves"
-        end
-    end
+function fileHelper:init(folder, fileName)
+    expect(1, folder, "string", "number")
+    expect(2, fileName, "string")
 
-    local obj = { folder = folder or "saves", fileName = fileName }
-    local objMetaTable = { __index = fileHelper }
+    folder = self:folderTypeHandle(folder)
 
-    function objMetaTable:__newindex(key, value)
-        error("Attempt to modify read-only table", 2)
-    end
-
-    setmetatable(obj, objMetaTable)
-
-    return obj
+    self.folder = folder or "saves"
+    self.fileName = fileName
 end
-
-function metaTable:__newindex(key, value)
-    error("Attempt to modify read-only table", 2)
-end
-
-setmetatable(fileHelper, metaTable)
 
 return fileHelper
