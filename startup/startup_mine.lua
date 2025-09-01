@@ -1,3 +1,2 @@
-local id = multishell.launch({}, "/bin/mine.lua")
-multishell.setTitle(id, "Miner")
-multishell.setFocus(id)
+local id = shell.openTab("/bin/mine.lua")
+shell.switchTab(id)
