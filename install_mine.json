@@ -1,0 +1,34 @@
+[
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/vector3.lua",
+        "path": "vector3.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/hook.lua",
+        "path": "hook.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/log_helper.lua",
+        "path": "log_helper.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/file_helper.lua",
+        "path": "file_helper.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/refuel_helper.lua",
+        "path": "refuel_helper.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/move_helper.lua",
+        "path": "move_helper.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/mine.lua",
+        "path": "mine.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/startup_mine.lua",
+        "path": "startup.lua"
+    }
+]
