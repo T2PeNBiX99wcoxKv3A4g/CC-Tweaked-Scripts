@@ -34,5 +34,9 @@
     {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/startup/startup_bridge_builder.lua",
         "path": "/startup/99_bridge_builder.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/bin/bridge_builder.lua",
+        "path": "/bin/bridge_builder.lua"
     }
 ]

@@ -34,5 +34,9 @@
     {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/startup/startup_mine.lua",
         "path": "/startup/99_mine.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/bin/mine.lua",
+        "path": "/bin/mine.lua"
     }
 ]
