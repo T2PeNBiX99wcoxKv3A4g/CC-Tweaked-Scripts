@@ -82,8 +82,8 @@ end
 ---@param lowFuelLevel number
 ---@param maxRefuelLevel number
 function refuelHelper:init(lowFuelLevel, maxRefuelLevel)
-    expect(1, lowFuelLevel, "number")
-    expect(2, maxRefuelLevel, "number")
+    expect(1, lowFuelLevel, "number", "nil")
+    expect(2, maxRefuelLevel, "number", "nil")
 
     self.currentStatus = refuelHelper.status.idle
     self.lowFuelLevel = lowFuelLevel or 100
