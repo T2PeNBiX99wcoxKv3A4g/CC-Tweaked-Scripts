@@ -1,7 +1,3 @@
--- Rename to startup.lua to run at startup
-
-package.path = package.path .. ";/?;/?.lua;/?/init.lua;/modules/?;/modules/?.lua;/modules/?/init.lua"
-
-local attack = require("modules.attack_loop")
-
-attack()
+local id = multishell.launch({}, "/bin/attack_loop.lua")
+multishell.setTitle(id, "Attack Loop")
+multishell.setFocus(id)

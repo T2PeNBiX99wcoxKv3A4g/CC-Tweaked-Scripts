@@ -1,13 +1,3 @@
--- Rename to startup.lua to run at startup
-
-package.path = package.path .. ";/?;/?.lua;/?/init.lua;/modules/?;/modules/?.lua;/modules/?/init.lua"
-
----@diagnostic disable: lowercase-global
-
-hook = require("modules.hook")
-
----@diagnostic enable: lowercase-global
-
-local bridgeBuilder = require("modules.bridge_builder")
-
-bridgeBuilder()
+local id = multishell.launch({}, "/bin/bridge_builder.lua")
+multishell.setTitle(id, "Bridge Builder")
+multishell.setFocus(id)
