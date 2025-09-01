@@ -89,7 +89,6 @@ function destroyer:mine3DAreaPath(size, height, width)
     return points
 end
 
----@return nil
 function destroyer:move()
     local step = self.currentStep
     local movePos = self.steps[step]
@@ -100,17 +99,14 @@ function destroyer:move()
     self:save()
 end
 
----@return nil
 function destroyer:backToStartPos()
     self.moveHelper:moveTo(self.initPos)
 end
 
----@return nil
 function destroyer:turnToStartDirection()
     self.moveHelper:turnTo(self.initDirection)
 end
 
----@return nil
 function destroyer:dropItemToChest()
     self.moveHelper:turnTo(moveHelper.directions.south)
 

@@ -10,5 +10,13 @@
     "bridge_builder": {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_bridge_builder.json",
         "path": "install_bridge_builder.json"
+    },
+    "password_door": {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_password_door.json",
+        "path": "install_password_door.json"
+    },
+    "attack_loop": {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_attack_loop.json",
+        "path": "install_attack_loop.json"
     }
 }

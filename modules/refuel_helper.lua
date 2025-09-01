@@ -41,7 +41,6 @@ function refuelHelper:isFuelItem(itemName)
     return false
 end
 
----@return nil
 function refuelHelper:tryRefuel()
     local fuelLevel = turtle.getFuelLevel()
     logHelper.fuelLevel(fuelLevel)

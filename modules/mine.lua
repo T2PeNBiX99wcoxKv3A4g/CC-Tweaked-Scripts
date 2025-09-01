@@ -79,7 +79,6 @@ function mine:mine3DAreaPath(size, height)
     return points
 end
 
----@return nil
 function mine:move()
     local step = self.currentStep
     local movePos = self.steps[step]
@@ -90,17 +89,14 @@ function mine:move()
     self:save()
 end
 
----@return nil
 function mine:backToStartPos()
     self.moveHelper:moveTo(self.initPos)
 end
 
----@return nil
 function mine:turnToStartDirection()
     self.moveHelper:turnTo(self.initDirection)
 end
 
----@return nil
 function mine:dropItemToChest()
     self.moveHelper:turnTo(moveHelper.directions.south)
 
@@ -115,7 +111,6 @@ function mine:dropItemToChest()
     turtle.select(1)
 end
 
----@return nil
 function mine:checkInventory()
     local hasSpace = false
 
