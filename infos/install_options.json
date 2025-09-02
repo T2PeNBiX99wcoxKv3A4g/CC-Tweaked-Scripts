@@ -3,6 +3,10 @@
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_mine.json",
         "path": "install_mine.json"
     },
+    "mine_watcher": {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_mine_watcher.json",
+        "path": "install_mine_watcher.json"
+    },
     "destroyer": {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_destroyer.json",
         "path": "install_destroyer.json"
