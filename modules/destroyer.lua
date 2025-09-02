@@ -221,10 +221,10 @@ destroyer.modesSteps = {
         return utils.mine3DForwardAreaPath(length, width, height)
     end,
     [destroyer.modes.down] = function(length, width, height)
-        return utils.mine3DDownAreaPath(length, width, height)
+        return utils.mine3DDownAreaPath(width, height, length)
     end,
     [destroyer.modes.up] = function(length, width, height)
-        return utils.mine3DUpAreaPath(length, width, height)
+        return utils.mine3DUpAreaPath(width, height, length)
     end
 }
 
