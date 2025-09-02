@@ -44,7 +44,6 @@ mineWatcher.statusName = {
 }
 
 function mineWatcher:refreshWatcher()
-    if table.isEmpty(self.minerGPSList) then return end
     term.clear()
     term.setCursorPos(1, 1)
     print("Miner GPS List: ")
