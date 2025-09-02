@@ -28,6 +28,10 @@
         "path": "/modules/move_helper.lua"
     },
     {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/utils.lua",
+        "path": "/modules/utils.lua"
+    },
+    {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/destroyer.lua",
         "path": "/modules/destroyer.lua"
     },

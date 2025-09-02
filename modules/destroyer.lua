@@ -4,6 +4,7 @@ local moveHelper = require("modules.move_helper")
 local fileHelper = require("modules.file_helper")
 local refuelHelper = require("modules.refuel_helper")
 local logHelper = require("modules.log_helper")
+local utils = require("modules.utils")
 
 ---@class destroyer
 local destroyer = class("destroyer")
@@ -19,8 +20,15 @@ destroyer.status = {
     unfinished = 6
 }
 
+---@enum destroyer.modes
+destroyer.modes = {
+    forward = 0,
+    down = 1,
+    up = 2
+}
+
 ---@type number
-destroyer.size = 10
+destroyer.length = 10
 ---@type number
 destroyer.height = 2
 ---@type number
@@ -37,6 +45,8 @@ destroyer.steps = {}
 destroyer.currentStep = 1
 ---@type destroyer.status
 destroyer.currentStatus = destroyer.status.idle
+---@type mine.modes
+destroyer.currentMode = destroyer.modes.forward
 ---@type fileHelper
 destroyer.saveHelper = fileHelper(fileHelper.type.save, "destroyer_save.json")
 ---@type fileHelper
@@ -45,49 +55,6 @@ destroyer.dataHelper = fileHelper(fileHelper.type.data, "destroyer_config.json")
 destroyer.refuelHelper = refuelHelper(100, 3000)
 ---@type moveHelper
 destroyer.moveHelper = moveHelper(destroyer)
-
----@param size number
----@param height number
----@param x number
----@return vec3[]
-function destroyer:mine2DAreaPath(size, height, x)
-    local points = {}
-    local sizeEnd = size - 1
-    local heightEnd = height - 1
-
-    for y = 0, heightEnd do
-        for z = 0, sizeEnd do
-            table.insert(points, vec3(x, y, z))
-        end
-    end
-
-    table.sort(points, function(a, b)
-        if a.y == b.y then
-            return a.z < b.z
-        end
-        return a.y < b.y
-    end)
-
-    return points
-end
-
----@param size number
----@param height number
----@param width number
----@return vec3[]
-function destroyer:mine3DAreaPath(size, height, width)
-    local points = {}
-    local widthEnd = width - 1
-
-    for x = 0, -widthEnd, -1 do
-        local layerPoints = self:mine2DAreaPath(size, height, x)
-        for _, v in ipairs(layerPoints) do
-            table.insert(points, v)
-        end
-    end
-
-    return points
-end
 
 function destroyer:move()
     local step = self.currentStep
@@ -169,16 +136,34 @@ end
 ---@return boolean
 function destroyer:save()
     local data = {
+        length = self.length,
+        width = self.width,
+        height = self.height,
         initPos = self.initPos:copy(),
         initDirection = self.initDirection,
         position = self.moveHelper.position:copy(),
         direction = self.moveHelper.direction,
         steps = self.steps,
         currentStep = self.currentStep,
-        currentStatus = self.currentStatus
+        currentStatus = self.currentStatus,
+        currentMode = self.currentMode
     }
     return self.saveHelper:save(data)
 end
+
+local dataCheck = {
+    "length",
+    "width",
+    "height",
+    "initPos",
+    "initDirection",
+    "position",
+    "direction",
+    "steps",
+    "currentStep",
+    "currentStatus",
+    "currentMode"
+}
 
 ---@return boolean
 function destroyer:load()
@@ -187,11 +172,14 @@ function destroyer:load()
         self:deleteSave()
         return false
     end
-    if not data.initPos or not data.initDirection or not data.position or not data.direction or not data.steps or not data.currentStep or not data.currentStatus then
+    if not utils.tableKeyCheck(data, dataCheck) then
         self:deleteSave()
         return false
     end
 
+    self.length = data.length
+    self.width = data.width
+    self.height = data.height
     self.initPos = vec3:fromTable(data.initPos) or vec3:zero()
     self.initDirection = data.initDirection
     self.moveHelper.position = vec3:fromTable(data.position) or vec3:zero()
@@ -206,6 +194,7 @@ function destroyer:load()
     self.steps = newSteps
     self.currentStep = data.currentStep
     self.currentStatus = data.currentStatus
+    self.currentMode = data.currentMode
 
     return true
 end
@@ -227,6 +216,18 @@ function destroyer:onPositionChanged(newPosition)
     self:save()
 end
 
+destroyer.modesSteps = {
+    [destroyer.modes.forward] = function(length, width, height)
+        return utils.mine3DForwardAreaPath(length, width, height)
+    end,
+    [destroyer.modes.down] = function(length, width, height)
+        return utils.mine3DDownAreaPath(length, width, height)
+    end,
+    [destroyer.modes.up] = function(length, width, height)
+        return utils.mine3DUpAreaPath(length, width, height)
+    end
+}
+
 function destroyer:init()
     hook.add("moveHelper.onDirectionChanged", self, self.onDirectionChanged)
     hook.add("moveHelper.onPositionChanged", self, self.onPositionChanged)
@@ -239,14 +240,14 @@ function destroyer:init()
 
         local config = self.dataHelper:load()
 
-        if config and config.size and config.height and config.width then
-            self.size = config.size
+        if config and config.length and config.width and config.height and config.attackSide then
+            self.length = config.size
             self.height = config.height
             self.width = config.width
             self.attackSide = config.attackSide
         else
             local configTable = {
-                size = self.size,
+                length = self.length,
                 height = self.height,
                 width = self.width,
                 attackSide = self.attackSide
@@ -258,15 +259,23 @@ function destroyer:init()
 
         term.clear()
         term.setCursorPos(1, 1)
+        print("Enter the mine mode, 0 = forward, 1 = down, 2 = up (default 0): ")
+        write("> ")
+        local mode = tonumber(read()) or 0
 
-        self.steps = self:mine3DAreaPath(self.size, self.height, self.width)
+        term.clear()
+        term.setCursorPos(1, 1)
+
+        self.steps = assert(self.modesSteps[mode], "Can't find any available steps can be use")(self.length, self.width,
+            self.height)
         self.currentStatus = self.status.mining
+        self.currentMode = mode
         self:save()
 
         logHelper.massage("Starting new mining operation...")
     end
 
-    logHelper.title(string.format("Mining a cube of %d * %d * %d", self.size, self.height, self.width))
+    logHelper.title(string.format("Mining a cube of %d * %d * %d", self.length, self.height, self.width))
 
     while true do
         if self.currentStatus == self.status.finished or self.currentStatus == self.status.unfinished then break end

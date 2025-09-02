@@ -4,6 +4,7 @@ local moveHelper = require("modules.move_helper")
 local fileHelper = require("modules.file_helper")
 local refuelHelper = require("modules.refuel_helper")
 local logHelper = require("modules.log_helper")
+local utils = require("modules.utils")
 
 ---@class mine
 local mine = class("mine")
@@ -19,8 +20,17 @@ mine.status = {
     unfinished = 6
 }
 
+---@enum mine.modes
+mine.modes = {
+    down = 0,
+    forward = 1,
+    up = 2
+}
+
 ---@type number
-mine.size = 5
+mine.length = 5
+---@type number
+mine.width = 5
 ---@type number
 mine.height = 11
 ---@type vec3
@@ -33,51 +43,14 @@ mine.steps = {}
 mine.currentStep = 1
 ---@type mine.status
 mine.currentStatus = mine.status.idle
+---@type mine.modes
+mine.currentMode = mine.modes.down
 ---@type fileHelper
 mine.saveHelper = fileHelper(fileHelper.type.save, "mine_save.json")
 ---@type refuelHelper
 mine.refuelHelper = refuelHelper()
 ---@type moveHelper
 mine.moveHelper = moveHelper(mine)
-
----@param size number
----@param y number
----@return vec3[]
-function mine:mine2DAreaPath(size, y)
-    local points = {}
-    local sizeEnd = size - 1
-
-    for x = 0, -sizeEnd, -1 do
-        for z = 0, sizeEnd do
-            table.insert(points, vec3(x, y, z))
-        end
-    end
-
-    table.sort(points, function(a, b)
-        if a.x == b.x then
-            return a.z < b.z
-        end
-        return a.x > b.x
-    end)
-
-    return points
-end
-
----@param size number
----@param height number
----@return vec3[]
-function mine:mine3DAreaPath(size, height)
-    local points = {}
-
-    for y = -1, -height, -1 do
-        local layerPoints = self:mine2DAreaPath(size, y)
-        for _, v in ipairs(layerPoints) do
-            table.insert(points, v)
-        end
-    end
-
-    return points
-end
 
 function mine:move()
     local step = self.currentStep
@@ -175,7 +148,8 @@ end
 ---@return boolean
 function mine:save()
     local data = {
-        size = self.size,
+        length = self.length,
+        width = self.width,
         height = self.height,
         initPos = self.initPos:copy(),
         initDirection = self.initDirection,
@@ -183,10 +157,25 @@ function mine:save()
         direction = self.moveHelper.direction,
         steps = self.steps,
         currentStep = self.currentStep,
-        currentStatus = self.currentStatus
+        currentStatus = self.currentStatus,
+        currentMode = self.currentMode
     }
     return self.saveHelper:save(data)
 end
+
+local dataCheck = {
+    "length",
+    "width",
+    "height",
+    "initPos",
+    "initDirection",
+    "position",
+    "direction",
+    "steps",
+    "currentStep",
+    "currentStatus",
+    "currentMode"
+}
 
 ---@return boolean
 function mine:load()
@@ -195,12 +184,13 @@ function mine:load()
         self:deleteSave()
         return false
     end
-    if not data.size or not data.height or not data.initPos or not data.initDirection or not data.position or not data.direction or not data.steps or not data.currentStep or not data.currentStatus then
+    if not utils.tableKeyCheck(data, dataCheck) then
         self:deleteSave()
         return false
     end
 
-    self.size = data.size
+    self.length = data.length
+    self.width = data.width
     self.height = data.height
     self.initPos = vec3:fromTable(data.initPos) or vec3:zero()
     self.initDirection = data.initDirection
@@ -216,6 +206,7 @@ function mine:load()
     self.steps = newSteps
     self.currentStep = data.currentStep
     self.currentStatus = data.currentStatus
+    self.currentMode = data.currentMode
 
     return true
 end
@@ -235,6 +226,18 @@ function mine:onPositionChanged(newPosition)
     self:save()
 end
 
+mine.modesSteps = {
+    [mine.modes.down] = function(length, width, height)
+        return utils.mine3DDownAreaPath(length, width, height)
+    end,
+    [mine.modes.forward] = function(length, width, height)
+        return utils.mine3DForwardAreaPath(length, width, height)
+    end,
+    [mine.modes.up] = function(length, width, height)
+        return utils.mine3DUpAreaPath(length, width, height)
+    end
+}
+
 function mine:init()
     hook.add("moveHelper.onDirectionChanged", self, self.onDirectionChanged)
     hook.add("moveHelper.onPositionChanged", self, self.onPositionChanged)
@@ -247,9 +250,15 @@ function mine:init()
 
         term.clear()
         term.setCursorPos(1, 1)
-        print("Enter the size of the cube to mine (default 5): ")
+        print("Enter the length of the cube to mine (default 5): ")
         write("> ")
-        local size = tonumber(read()) or 5
+        local length = tonumber(read()) or 5
+
+        term.clear()
+        term.setCursorPos(1, 1)
+        print("Enter the width of the cube to mine (default 5): ")
+        write("> ")
+        local width = tonumber(read()) or 5
 
         term.clear()
         term.setCursorPos(1, 1)
@@ -259,17 +268,25 @@ function mine:init()
 
         term.clear()
         term.setCursorPos(1, 1)
+        print("Enter the mine mode, 0 = down, 1 = forward, 2 = up (default 0): ")
+        write("> ")
+        local mode = tonumber(read()) or 0
 
-        self.steps = self:mine3DAreaPath(size, height)
+        term.clear()
+        term.setCursorPos(1, 1)
+
+        self.steps = assert(self.modesSteps[mode], "Can't find any available steps can be use")(length, width, height)
         self.currentStatus = self.status.mining
-        self.size = size
+        self.currentMode = mode
+        self.length = length
+        self.width = width
         self.height = height
         self:save()
 
         logHelper.massage("Starting new mining operation...")
     end
 
-    logHelper.title(string.format("Mining a cube of %d * %d * %d", self.size, self.size, self.height))
+    logHelper.title(string.format("Mining a cube of %d * %d * %d", self.length, self.width, self.height))
 
     while true do
         if self.currentStatus == self.status.finished or self.currentStatus == self.status.unfinished then break end

@@ -21,7 +21,8 @@ bridgeBuilder.status = {
 
 ---@type table<string, boolean>
 bridgeBuilder.skipBlocks = {
-    ["minecraft:grass"] = true
+    ["minecraft:grass"] = true,
+    ["minecraft:fire"] = true
 }
 
 ---@type vec3
