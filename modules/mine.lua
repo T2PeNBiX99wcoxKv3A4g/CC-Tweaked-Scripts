@@ -36,6 +36,8 @@ mine.width = 5
 mine.height = 11
 ---@type vec3
 mine.initPos = vec3(0, 0, 0)
+---@type vec3|nil
+mine.initGPSPos = nil
 ---@type moveHelper.directions
 mine.initDirection = moveHelper.directions.north
 ---@type vec3[]
@@ -62,8 +64,14 @@ mine.moveHelper = moveHelper(mine)
 function mine:move()
     local step = self.currentStep
     local movePos = self.steps[step]
-    logHelper.progress(string.format("Step %d/%d: {x: %d, y: %d, z: %d}", step, #self.steps, movePos.x, movePos.y,
-        movePos.z))
+    local printPos = movePos:copy()
+
+    if settings.get(mineGPS.settingName, false) and self.initGPSPos then
+        printPos = self.initGPSPos + printPos
+    end
+
+    logHelper.progress(string.format("Step %d/%d: {x: %d, y: %d, z: %d}", step, #self.steps, printPos.x, printPos.y,
+        printPos.z))
     self.moveHelper:moveTo(movePos)
     self.currentStep = self.currentStep + 1
     self:save()
@@ -264,6 +272,14 @@ function mine:init()
     hook.add("moveHelper.onPositionChanged", self, self.onPositionChanged)
 
     self:broadcastGPSData()
+
+    if settings.get(mineGPS.settingName, false) then
+        local gpsX, gpsY, gpsZ = gps.locate(2, false)
+
+        if gpsX then
+            self.initGPSPos = vec3(gpsX, gpsY, gpsZ) --[[@as vec3]]
+        end
+    end
 
     if self:load() then
         logHelper.massage("Loaded previous state. Resuming mining operation...")
