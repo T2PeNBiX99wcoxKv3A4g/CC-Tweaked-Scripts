@@ -131,7 +131,7 @@ function utils.tableKeyCheck(tbl, checkTbl)
     return true
 end
 
-utils.__oldPrint = print
+Utils__oldPrint = print
 
 ---@param ... any
 function print(...)
@@ -144,7 +144,12 @@ function print(...)
             table.insert(rets, value)
         end
     end
-    utils.__oldPrint(table.unpack(rets))
+    Utils__oldPrint(table.unpack(rets))
+end
+
+---@param tbl table
+function table.isEmpty(tbl)
+    return next(tbl) == nil
 end
 
 return utils

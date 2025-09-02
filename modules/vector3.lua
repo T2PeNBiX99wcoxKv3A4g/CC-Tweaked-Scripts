@@ -3,6 +3,11 @@ local class = require("modules.class")
 ---@class vec3
 local vec3 = class("vec3")
 
+---@class vec3Table
+---@field x number
+---@field y number
+---@field z number
+
 ---Will never be use and replace with instance table
 ---@type number
 vec3.x = nil
@@ -69,7 +74,7 @@ function vec3:addZInPlace(z)
 end
 
 ---@return vec3
-function vec3:zero()
+function vec3.zero()
     return vec3(0, 0, 0)
 end
 
@@ -276,7 +281,7 @@ end
 ---@return vec3
 function vec3:normalize()
     local len = self:length()
-    if len == 0 then return vec3:zero() end
+    if len == 0 then return vec3.zero() end
     return vec3(self.x / len, self.y / len, self.z / len)
 end
 
@@ -317,7 +322,7 @@ end
 
 ---@param vecTable table
 ---@return vec3|nil
-function vec3:fromTable(vecTable)
+function vec3.fromTable(vecTable)
     if not vecTable.x or not vecTable.y or not vecTable.z then return nil end
     return vec3(vecTable.x, vecTable.y, vecTable.z)
 end

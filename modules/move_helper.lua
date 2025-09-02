@@ -36,7 +36,7 @@ moveHelper.turns = {
 ---@type vec3
 moveHelper.position = nil
 --- 0 = north, 1 = east, 2 = south, 3 = west
----@type number
+---@type moveHelper.directions
 moveHelper.direction = nil
 ---@type mine|destroyer
 moveHelper.mainClass = nil
@@ -248,7 +248,7 @@ function moveHelper:init(mainClass)
     ---@diagnostic disable-next-line: param-type-mismatch
     expect(1, mainClass, "table")
 
-    self.position = vec3:zero()
+    self.position = vec3.zero()
     self.direction = moveHelper.directions.north
     self.mainClass = mainClass
 end

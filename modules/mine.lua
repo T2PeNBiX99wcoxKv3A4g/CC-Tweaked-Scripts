@@ -4,6 +4,7 @@ local moveHelper = require("modules.move_helper")
 local fileHelper = require("modules.file_helper")
 local refuelHelper = require("modules.refuel_helper")
 local logHelper = require("modules.log_helper")
+local mineGPS = require("modules.mine_gps")
 local utils = require("modules.utils")
 
 ---@class mine
@@ -45,6 +46,10 @@ mine.currentStep = 1
 mine.currentStatus = mine.status.idle
 ---@type mine.modes
 mine.currentMode = mine.modes.down
+---@type boolean
+mine.gpsAvailable = false
+---@type ccTweaked.peripherals.Modem
+mine.modem = nil
 ---@type fileHelper
 mine.saveHelper = fileHelper(fileHelper.type.save, "mine_save.json")
 ---@type refuelHelper
@@ -192,15 +197,15 @@ function mine:load()
     self.length = data.length
     self.width = data.width
     self.height = data.height
-    self.initPos = vec3:fromTable(data.initPos) or vec3:zero()
+    self.initPos = vec3.fromTable(data.initPos) or vec3.zero()
     self.initDirection = data.initDirection
-    self.moveHelper.position = vec3:fromTable(data.position) or vec3:zero()
+    self.moveHelper.position = vec3.fromTable(data.position) or vec3.zero()
     self.moveHelper.direction = data.direction
 
     local newSteps = {}
 
     for index, value in ipairs(data.steps) do
-        newSteps[index] = vec3:fromTable(value)
+        newSteps[index] = vec3.fromTable(value)
     end
 
     self.steps = newSteps
@@ -216,14 +221,28 @@ function mine:deleteSave()
     return self.saveHelper:delete()
 end
 
+function mine:broadcastGPSData()
+    if not MineGPSIsAvailable then return end
+    local gpsX, gpsY, gpsZ = gps.locate(2, false)
+    if not gpsX then return end
+    ---@type mineGPS.data
+    local data = {
+        currentStatus = self.currentStatus,
+        currentPosition = vec3(gpsX, gpsY, gpsZ)
+    }
+    rednet.broadcast(data, mineGPS.protocol)
+end
+
 ---@param newDirection moveHelper.directions
 function mine:onDirectionChanged(newDirection)
     self:save()
+    self:broadcastGPSData()
 end
 
 ---@param newPosition vec3
 function mine:onPositionChanged(newPosition)
     self:save()
+    self:broadcastGPSData()
 end
 
 mine.modesSteps = {
@@ -241,6 +260,8 @@ mine.modesSteps = {
 function mine:init()
     hook.add("moveHelper.onDirectionChanged", self, self.onDirectionChanged)
     hook.add("moveHelper.onPositionChanged", self, self.onPositionChanged)
+
+    self:broadcastGPSData()
 
     if self:load() then
         logHelper.massage("Loaded previous state. Resuming mining operation...")

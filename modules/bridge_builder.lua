@@ -235,10 +235,10 @@ function bridgeBuilder:load()
         return false
     end
 
-    self.initPos = vec3:fromTable(data.initPos) or vec3:zero()
+    self.initPos = vec3.fromTable(data.initPos) or vec3.zero()
     self.initDirection = data.initDirection
-    self.progressPosition = data.progressPosition and vec3:fromTable(data.progressPosition) or nil
-    self.moveHelper.position = vec3:fromTable(data.position) or vec3:zero()
+    self.progressPosition = data.progressPosition and vec3.fromTable(data.progressPosition) or nil
+    self.moveHelper.position = vec3.fromTable(data.position) or vec3.zero()
     self.moveHelper.direction = data.direction
     self.currentStatus = data.currentStatus
 

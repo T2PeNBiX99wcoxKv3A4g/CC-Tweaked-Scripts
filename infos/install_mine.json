@@ -36,11 +36,27 @@
         "path": "/modules/mine.lua"
     },
     {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/mine_gps.lua",
+        "path": "/modules/mine_gps.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/startup/startup_global.lua",
+        "path": "/startup/00_global.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/startup/startup_mine_gps.lua",
+        "path": "/startup/80_mine_gps.lua"
+    },
+    {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/startup/startup_mine.lua",
         "path": "/startup/99_mine.lua"
     },
     {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/bin/mine.lua",
         "path": "/bin/mine.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/bin/mine_gps.lua",
+        "path": "/bin/mine_gps.lua"
     }
 ]
