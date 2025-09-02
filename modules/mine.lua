@@ -52,6 +52,8 @@ mine.gpsAvailable = false
 mine.modem = nil
 ---@type fileHelper
 mine.saveHelper = fileHelper(fileHelper.type.save, "mine_save.json")
+---@type fileHelper
+mine.gpsHelper = fileHelper(fileHelper.type.save, "mine_gps_list.json")
 ---@type refuelHelper
 mine.refuelHelper = refuelHelper()
 ---@type moveHelper
@@ -222,7 +224,7 @@ function mine:deleteSave()
 end
 
 function mine:broadcastGPSData()
-    if not MineGPSIsAvailable then return end
+    if not settings.get(mineGPS.settingName, false) then return end
     local gpsX, gpsY, gpsZ = gps.locate(2, false)
     if not gpsX then return end
     ---@type mineGPS.data

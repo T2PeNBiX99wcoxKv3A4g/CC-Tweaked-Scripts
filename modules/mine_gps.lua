@@ -1,5 +1,6 @@
 local class = require("modules.class")
 local vec3 = require("modules.vector3")
+local fileHelper = require("modules.file_helper")
 local utils = require("modules.utils")
 
 ---@class mineGPS
@@ -20,15 +21,16 @@ mineGPS.gpsAvailable = false
 mineGPS.modem = nil
 ---@type string
 mineGPS.protocol = "mineGPS"
+---@type string
+mineGPS.settingName = "mineGPS.gpsAvailable"
+---@type table<number, mineGPS.data>
+mineGPS.minerGPSList = {}
+---@type fileHelper
+mineGPS.gpsHelper = fileHelper(fileHelper.type.save, "mine_gps_list.json")
 
 ---@class mineGPS.data
 ---@field currentStatus mine.status
 ---@field currentPosition vec3
-
----@type boolean
-MineGPSIsAvailable = false
----@type table<number, mineGPS.data>
-MineGPSOtherPos = {}
 
 function mineGPS:gpsSetup()
     self.gpsAvailable = gps.locate(2, false) and true or false
@@ -60,21 +62,36 @@ function mineGPS:handleMessage()
         currentPosition = gpsMsg.currentPosition:copy()
     }
 
-    MineGPSOtherPos[id] = data
+    self.minerGPSList[id] = data
+end
+
+function mineGPS:saveGPSList()
+    self.gpsHelper:save(table.copy(self.minerGPSList))
 end
 
 function mineGPS:init()
+    settings.define(self.settingName, {
+        description = "GPS is available or not",
+        default = false,
+        type = "boolean"
+    })
+
+    self.gpsHelper:delete()
     self:gpsSetup()
 
     if not self.gpsAvailable then
         printError("GPS is not Available!")
+        settings.set(self.settingName, false)
+        settings.save()
         return
     end
 
-    MineGPSIsAvailable = true
+    settings.set(self.settingName, true)
+    settings.save()
 
     while true do
         self:handleMessage()
+        self:saveGPSList()
         sleep(0)
     end
 end

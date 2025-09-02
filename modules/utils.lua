@@ -1,4 +1,5 @@
 local vec3 = require("modules.vector3")
+local expect = require("cc.expect").expect
 
 ---@class utils
 local utils = {}
@@ -131,7 +132,7 @@ function utils.tableKeyCheck(tbl, checkTbl)
     return true
 end
 
-Utils__oldPrint = print
+utils.__oldPrint = utils.__oldPrint or print
 
 ---@param ... any
 function print(...)
@@ -144,12 +145,38 @@ function print(...)
             table.insert(rets, value)
         end
     end
-    Utils__oldPrint(table.unpack(rets))
+    utils.__oldPrint(table.unpack(rets))
 end
 
 ---@param tbl table
 function table.isEmpty(tbl)
     return next(tbl) == nil
+end
+
+---@param tbl table
+---@param lookupTable table|nil
+---@return table
+function table.copy(tbl, lookupTable)
+    ---@diagnostic disable-next-line: param-type-mismatch
+    expect(1, tbl, "table")
+
+    local copy = {}
+    setmetatable(copy, debug.getmetatable(tbl))
+    for k, v in pairs(tbl) do
+        if type(v) ~= "table" then
+            copy[k] = v
+        else
+            lookupTable = lookupTable or {}
+            lookupTable[tbl] = copy
+
+            if lookupTable[v] then
+                copy[k] = lookupTable[v]
+            else
+                copy[k] = table.copy(v, lookupTable)
+            end
+        end
+    end
+    return copy
 end
 
 return utils

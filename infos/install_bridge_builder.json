@@ -32,8 +32,8 @@
         "path": "/modules/bridge_builder.lua"
     },
     {
-        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/startup/startup_global.lua",
-        "path": "/startup/30_global.lua"
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/global.lua",
+        "path": "/modules/global.lua"
     },
     {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/startup/startup_bridge_builder.lua",
