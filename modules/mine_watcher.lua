@@ -10,7 +10,7 @@ mineWatcher.modem = nil
 ---@type string
 mineWatcher.protocol = "mineGPS"
 ---@type table<number, mineGPS.data>
-mineWatcher.AllPos = {}
+mineWatcher.minerGPSList = {}
 
 local messageCheck = {
     "currentStatus",
@@ -29,14 +29,30 @@ function mineWatcher:handleMessage()
         currentPosition = gpsMsg.currentPosition:copy()
     }
 
-    self.AllPos[id] = data
+    self.minerGPSList[id] = data
 end
 
+---@type string[]
+mineWatcher.statusName = {
+    "idle",
+    "mining",
+    "tempBacking",
+    "backingFinished",
+    "backingUnfinished",
+    "finished",
+    "unfinished"
+}
+
 function mineWatcher:refreshWatcher()
-    if table.isEmpty(self.AllPos) then return end
+    if table.isEmpty(self.minerGPSList) then return end
     term.clear()
     term.setCursorPos(1, 1)
-    print(self.AllPos)
+    print("Miner GPS List: ")
+
+    for id, data in pairs(self.minerGPSList) do
+        print(string.format("ID %d: pos - %s, status - %s", id, data.currentPosition,
+            self.statusName[data.currentStatus + 1] or "unknown"))
+    end
 end
 
 function mineWatcher:redNetSetup()
@@ -52,10 +68,11 @@ end
 function mineWatcher:init()
     self:redNetSetup()
 
+    term.clear()
+    term.setCursorPos(1, 1)
+    print("Trying get miner gps infos...")
+
     while true do
-        term.clear()
-        term.setCursorPos(1, 1)
-        print("Trying get all miner infos...")
         self:handleMessage()
         self:refreshWatcher()
     end

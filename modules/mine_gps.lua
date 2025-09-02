@@ -65,6 +65,29 @@ function mineGPS:handleMessage()
     self.minerGPSList[id] = data
 end
 
+---@type string[]
+mineGPS.statusName = {
+    "idle",
+    "mining",
+    "tempBacking",
+    "backingFinished",
+    "backingUnfinished",
+    "finished",
+    "unfinished"
+}
+
+function mineGPS:refreshWatcher()
+    if table.isEmpty(self.minerGPSList) then return end
+    term.clear()
+    term.setCursorPos(1, 1)
+    print("Miner GPS List: ")
+
+    for id, data in pairs(self.minerGPSList) do
+        print(string.format("ID %d: pos - %s, status - %s", id, data.currentPosition,
+            self.statusName[data.currentStatus + 1] or "unknown"))
+    end
+end
+
 function mineGPS:saveGPSList()
     self.gpsHelper:save(table.copy(self.minerGPSList))
 end
@@ -79,6 +102,10 @@ function mineGPS:init()
     self.gpsHelper:delete()
     self:gpsSetup()
 
+    term.clear()
+    term.setCursorPos(1, 1)
+    print("Trying get miner gps infos...")
+
     if not self.gpsAvailable then
         printError("GPS is not Available!")
         settings.set(self.settingName, false)
@@ -91,6 +118,7 @@ function mineGPS:init()
 
     while true do
         self:handleMessage()
+        self:refreshWatcher()
         self:saveGPSList()
         sleep(0)
     end
