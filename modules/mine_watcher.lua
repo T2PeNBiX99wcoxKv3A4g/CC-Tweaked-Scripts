@@ -14,14 +14,12 @@ mineWatcher.minerGPSList = {}
 
 local messageCheck = {
     "currentStatus",
-    "currentPosition",
-    "currentDirection"
+    "currentPosition"
 }
 
 function mineWatcher:handleMessage()
     local id, message = rednet.receive(self.protocol)
     if not id then return end
-    print(id, message, "test")
     if type(message) ~= "table" or not utils.tableKeyCheck(message, messageCheck) then return end
     local gpsMsg = message --[[@as mineGPS.data]]
     ---@type mineGPS.data
@@ -45,8 +43,8 @@ mineWatcher.statusName = {
 }
 
 function mineWatcher:refreshWatcher()
-    -- term.clear()
-    -- term.setCursorPos(1, 1)
+    term.clear()
+    term.setCursorPos(1, 1)
     print("Miner GPS List: ")
 
     for id, data in pairs(self.minerGPSList) do

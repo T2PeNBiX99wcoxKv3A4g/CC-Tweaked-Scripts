@@ -47,8 +47,7 @@ end
 
 local messageCheck = {
     "currentStatus",
-    "currentPosition",
-    "currentDirection"
+    "currentPosition"
 }
 
 function mineGPS:handleMessage()
