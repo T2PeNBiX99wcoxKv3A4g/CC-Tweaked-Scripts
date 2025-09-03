@@ -2,6 +2,7 @@ local class = require("modules.class")
 local vec3 = require("modules.vector3")
 local moveHelper = require("modules.move_helper")
 local refuelHelper = require("modules.refuel_helper")
+local logHelper = require("modules.log_helper")
 
 ---@class elevator
 local elevator = class("elevator")
@@ -25,7 +26,7 @@ function elevator:heightLevelControl()
 
     term.clear()
     term.setCursorPos(1, 1)
-    print("Height level increase " .. highLevel)
+    logHelper.progress("Height level increase " .. highLevel)
 
     self.moveHelper:moveTo(self.moveHelper.position:addY(highLevel))
 end
@@ -33,6 +34,8 @@ end
 function elevator:init()
     self.initPos = self.moveHelper.position:copy()
     self.initDirection = self.moveHelper.direction
+
+    logHelper.title("Elevator")
 
     while true do
         self:heightLevelControl()
