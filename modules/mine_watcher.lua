@@ -12,9 +12,11 @@ mineWatcher.protocol = "mineGPS"
 ---@type table<number, mineGPS.data>
 mineWatcher.minerGPSList = {}
 
+---@type string[]
 local messageCheck = {
     "currentStatus",
-    "currentPosition"
+    "currentPosition",
+    "currentFuelLevel"
 }
 
 function mineWatcher:handleMessage()
@@ -25,7 +27,8 @@ function mineWatcher:handleMessage()
     ---@type mineGPS.data
     local data = {
         currentStatus = gpsMsg.currentStatus,
-        currentPosition = vec3.fromTable(gpsMsg.currentPosition) or vec3.zero()
+        currentPosition = vec3.fromTable(gpsMsg.currentPosition) or vec3.zero(),
+        currentFuelLevel = gpsMsg.currentFuelLevel
     }
 
     self.minerGPSList[id] = data
@@ -48,8 +51,8 @@ function mineWatcher:refreshWatcher()
     print("Miner GPS List: ")
 
     for id, data in pairs(self.minerGPSList) do
-        print(string.format("ID %d: pos - %s, status - %s", id, data.currentPosition,
-            self.statusName[data.currentStatus + 1] or "unknown"))
+        print(string.format("ID %d: pos - %s, status - %s, fuel - %s", id, data.currentPosition,
+            self.statusName[data.currentStatus + 1] or "unknown", data.currentFuelLevel))
     end
 end
 

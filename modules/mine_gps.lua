@@ -31,10 +31,19 @@ mineGPS.gpsHelper = fileHelper(fileHelper.type.save, "mine_gps_list.json")
 ---@class mineGPS.data
 ---@field currentStatus mine.status
 ---@field currentPosition vec3
+---@field currentFuelLevel number|"unlimited"
 
 ---@class mineGPS.message
 ---@field currentStatus mine.status
 ---@field currentPosition vec3Table
+---@field currentFuelLevel number|"unlimited"
+
+---@type string[]
+local messageCheck = {
+    "currentStatus",
+    "currentPosition",
+    "currentFuelLevel"
+}
 
 function mineGPS:gpsSetup()
     self.gpsAvailable = gps.locate(2, false) and true or false
@@ -49,11 +58,6 @@ function mineGPS:gpsSetup()
     self.modem = modem
 end
 
-local messageCheck = {
-    "currentStatus",
-    "currentPosition"
-}
-
 function mineGPS:handleMessage()
     local id, message = rednet.receive(self.protocol)
     if not id then return end
@@ -62,7 +66,8 @@ function mineGPS:handleMessage()
     ---@type mineGPS.data
     local data = {
         currentStatus = gpsMsg.currentStatus,
-        currentPosition = vec3.fromTable(gpsMsg.currentPosition) or vec3.zero()
+        currentPosition = vec3.fromTable(gpsMsg.currentPosition) or vec3.zero(),
+        currentFuelLevel = gpsMsg.currentFuelLevel
     }
 
     self.minerGPSList[id] = data
@@ -85,8 +90,8 @@ function mineGPS:refreshWatcher()
     print("Miner GPS List: ")
 
     for id, data in pairs(self.minerGPSList) do
-        print(string.format("ID %d: pos - %s, status - %s", id, data.currentPosition,
-            self.statusName[data.currentStatus + 1] or "unknown"))
+        print(string.format("ID %d: pos - %s, status - %s, fuel - %s", id, data.currentPosition,
+            self.statusName[data.currentStatus + 1] or "unknown", data.currentFuelLevel))
     end
 end
 
