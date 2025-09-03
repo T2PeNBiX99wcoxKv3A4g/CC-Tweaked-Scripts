@@ -45,8 +45,8 @@ mineWatcher.statusName = {
 }
 
 function mineWatcher:refreshWatcher()
-    term.clear()
-    term.setCursorPos(1, 1)
+    -- term.clear()
+    -- term.setCursorPos(1, 1)
     print("Miner GPS List: ")
 
     for id, data in pairs(self.minerGPSList) do
