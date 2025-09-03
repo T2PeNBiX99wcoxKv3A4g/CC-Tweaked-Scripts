@@ -26,6 +26,8 @@ function elevator:heightLevelControl()
 
     term.clear()
     term.setCursorPos(1, 1)
+
+    logHelper.title("Elevator")
     logHelper.progress("Height level increase " .. highLevel)
 
     self.moveHelper:moveTo(self.moveHelper.position:addY(highLevel))
@@ -34,8 +36,6 @@ end
 function elevator:init()
     self.initPos = self.moveHelper.position:copy()
     self.initDirection = self.moveHelper.direction
-
-    logHelper.title("Elevator")
 
     while true do
         self:heightLevelControl()
