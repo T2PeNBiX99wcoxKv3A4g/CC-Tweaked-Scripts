@@ -70,7 +70,7 @@ function mine:move()
         printPos = self.initGPSPos + printPos
     end
 
-    logHelper.progress(string.format("Step %d/%d: {x: %d, y: %d, z: %d}", step, #self.steps, printPos.x, printPos.y,
+    logHelper.progress(string.format("Step %d/%d: {x: %d, y: %d, z: %d}", step - 1, #self.steps, printPos.x, printPos.y,
         printPos.z))
     self.moveHelper:moveTo(movePos)
     self.currentStep = self.currentStep + 1
@@ -240,7 +240,7 @@ function mine:broadcastGPSData()
         currentStatus = self.currentStatus,
         currentPosition = vec3(gpsX, gpsY, gpsZ),
         currentFuelLevel = turtle.getFuelLevel(),
-        currentStep = self.currentStep,
+        currentStep = self.currentStep - 1,
         maxStep = #self.steps
     }
     rednet.broadcast(data, mineGPS.protocol)
