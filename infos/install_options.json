@@ -22,5 +22,9 @@
     "attack_loop": {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_attack_loop.json",
         "path": "install_attack_loop.json"
+    },
+    "elevator": {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_elevator.json",
+        "path": "install_elevator.json"
     }
 }

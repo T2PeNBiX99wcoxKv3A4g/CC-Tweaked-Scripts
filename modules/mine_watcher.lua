@@ -21,6 +21,7 @@ local messageCheck = {
 function mineWatcher:handleMessage()
     local id, message = rednet.receive(self.protocol)
     if not id then return end
+    print(id, message, "test")
     if type(message) ~= "table" or not utils.tableKeyCheck(message, messageCheck) then return end
     local gpsMsg = message --[[@as mineGPS.data]]
     ---@type mineGPS.data
