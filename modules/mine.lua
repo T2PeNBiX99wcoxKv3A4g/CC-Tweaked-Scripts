@@ -239,7 +239,9 @@ function mine:broadcastGPSData()
     local data = {
         currentStatus = self.currentStatus,
         currentPosition = vec3(gpsX, gpsY, gpsZ),
-        currentFuelLevel = turtle.getFuelLevel()
+        currentFuelLevel = turtle.getFuelLevel(),
+        currentStep = self.currentStep,
+        maxStep = #self.steps
     }
     rednet.broadcast(data, mineGPS.protocol)
 end

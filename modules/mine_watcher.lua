@@ -16,7 +16,9 @@ mineWatcher.minerGPSList = {}
 local messageCheck = {
     "currentStatus",
     "currentPosition",
-    "currentFuelLevel"
+    "currentFuelLevel",
+    "currentStep",
+    "maxStep"
 }
 
 function mineWatcher:handleMessage()
@@ -28,7 +30,9 @@ function mineWatcher:handleMessage()
     local data = {
         currentStatus = gpsMsg.currentStatus,
         currentPosition = vec3.fromTable(gpsMsg.currentPosition) or vec3.zero(),
-        currentFuelLevel = gpsMsg.currentFuelLevel
+        currentFuelLevel = gpsMsg.currentFuelLevel,
+        currentStep = gpsMsg.currentStep,
+        maxStep = gpsMsg.maxStep
     }
 
     self.minerGPSList[id] = data
@@ -51,8 +55,12 @@ function mineWatcher:refreshWatcher()
     print("Miner GPS List: ")
 
     for id, data in pairs(self.minerGPSList) do
-        print(string.format("ID %d: pos - %s, status - %s, fuel - %s", id, data.currentPosition,
+        print(string.format("ID %d:\n  Pos - %s\n  Status - %s\n  Fuel - %s", id, data.currentPosition,
             self.statusName[data.currentStatus + 1] or "unknown", data.currentFuelLevel))
+
+        if data.currentStatus > 0 then
+            print(string.format("Step %d/%d", data.currentStep, data.maxStep))
+        end
     end
 end
 

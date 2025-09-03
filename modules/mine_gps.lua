@@ -32,17 +32,23 @@ mineGPS.gpsHelper = fileHelper(fileHelper.type.save, "mine_gps_list.json")
 ---@field currentStatus mine.status
 ---@field currentPosition vec3
 ---@field currentFuelLevel number|"unlimited"
+---@field currentStep number
+---@field maxStep number
 
 ---@class mineGPS.message
 ---@field currentStatus mine.status
 ---@field currentPosition vec3Table
 ---@field currentFuelLevel number|"unlimited"
+---@field currentStep number
+---@field maxStep number
 
 ---@type string[]
 local messageCheck = {
     "currentStatus",
     "currentPosition",
-    "currentFuelLevel"
+    "currentFuelLevel",
+    "currentStep",
+    "maxStep"
 }
 
 function mineGPS:gpsSetup()
@@ -67,7 +73,9 @@ function mineGPS:handleMessage()
     local data = {
         currentStatus = gpsMsg.currentStatus,
         currentPosition = vec3.fromTable(gpsMsg.currentPosition) or vec3.zero(),
-        currentFuelLevel = gpsMsg.currentFuelLevel
+        currentFuelLevel = gpsMsg.currentFuelLevel,
+        currentStep = gpsMsg.currentStep,
+        maxStep = gpsMsg.maxStep
     }
 
     self.minerGPSList[id] = data
@@ -90,13 +98,17 @@ function mineGPS:refreshWatcher()
     print("Miner GPS List: ")
 
     for id, data in pairs(self.minerGPSList) do
-        print(string.format("ID %d: pos - %s, status - %s, fuel - %s", id, data.currentPosition,
+        print(string.format("ID %d:\n  Pos - %s\n  Status - %s\n  Fuel - %s", id, data.currentPosition,
             self.statusName[data.currentStatus + 1] or "unknown", data.currentFuelLevel))
+
+        if data.currentStatus > 0 then
+            print(string.format("Step %d/%d", data.currentStep, data.maxStep))
+        end
     end
 end
 
 function mineGPS:saveGPSList()
-    self.gpsHelper:save(table.copy(self.minerGPSList))
+    self.gpsHelper:save(self.minerGPSList)
 end
 
 function mineGPS:init()
