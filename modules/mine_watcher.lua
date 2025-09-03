@@ -21,11 +21,11 @@ function mineWatcher:handleMessage()
     local id, message = rednet.receive(self.protocol)
     if not id then return end
     if type(message) ~= "table" or not utils.tableKeyCheck(message, messageCheck) then return end
-    local gpsMsg = message --[[@as mineGPS.data]]
+    local gpsMsg = message --[[@as mineGPS.message]]
     ---@type mineGPS.data
     local data = {
         currentStatus = gpsMsg.currentStatus,
-        currentPosition = gpsMsg.currentPosition:copy()
+        currentPosition = vec3.fromTable(gpsMsg.currentPosition) or vec3.zero()
     }
 
     self.minerGPSList[id] = data
