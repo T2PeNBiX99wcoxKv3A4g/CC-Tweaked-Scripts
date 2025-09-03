@@ -102,7 +102,7 @@ function mineGPS:refreshWatcher()
             self.statusName[data.currentStatus + 1] or "unknown", data.currentFuelLevel))
 
         if data.currentStatus > 0 then
-            print(string.format("Step %d/%d", data.currentStep, data.maxStep))
+            print(string.format("  Step %d/%d", data.currentStep, data.maxStep))
         end
     end
 end
