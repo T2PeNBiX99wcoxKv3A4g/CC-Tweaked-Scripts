@@ -51,10 +51,7 @@ local messageCheck = {
     "maxStep"
 }
 
-function mineGPS:gpsSetup()
-    self.gpsAvailable = gps.locate(2, false) and true or false
-    if not self.gpsAvailable then return end
-
+function mineGPS:redNetSetup()
     ---@type ccTweaked.peripherals.Modem|nil
     local modem = peripheral.find("modem") --[[@as ccTweaked.peripherals.Modem|nil]]
     if not modem then return end
@@ -62,6 +59,10 @@ function mineGPS:gpsSetup()
     rednet.open(peripheral.getName(modem))
 
     self.modem = modem
+end
+
+function mineGPS:gpsCheck()
+    return gps.locate(2, false) and true or false
 end
 
 function mineGPS:handleMessage()
@@ -95,7 +96,7 @@ mineGPS.statusName = {
 function mineGPS:refreshWatcher()
     term.clear()
     term.setCursorPos(1, 1)
-    print("Miner GPS List: ")
+    print("Other Miners GPS List: ")
 
     for id, data in pairs(self.minerGPSList) do
         print(string.format("ID %d:\n  Pos - %s\n  Status - %s\n  Fuel - %s", id, data.currentPosition,
@@ -119,27 +120,31 @@ function mineGPS:init()
     })
 
     self.gpsHelper:delete()
-    self:gpsSetup()
+    self:redNetSetup()
 
     term.clear()
     term.setCursorPos(1, 1)
     print("Trying get miner gps infos...")
 
-    if not self.gpsAvailable then
-        printError("GPS is not Available!")
-        settings.set(self.settingName, false)
-        settings.save()
-        return
-    end
-
-    settings.set(self.settingName, true)
-    settings.save()
-
     while true do
-        self:handleMessage()
-        self:refreshWatcher()
-        self:saveGPSList()
-        sleep(0)
+        self.gpsAvailable = self:gpsCheck()
+
+        if settings.get(self.settingName, false) ~= self.gpsAvailable then
+            settings.set(self.settingName, self.gpsAvailable)
+            settings.save()
+        end
+
+        if self.gpsAvailable then
+            self:handleMessage()
+            self:refreshWatcher()
+            self:saveGPSList()
+            sleep(0)
+        else
+            term.clear()
+            term.setCursorPos(1, 1)
+            printError("GPS is not Available!")
+            sleep(10)
+        end
     end
 end
 

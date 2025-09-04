@@ -5,6 +5,8 @@ local utils = require("modules.utils")
 ---@class mineWatcher
 local mineWatcher = class("mineWatcher")
 
+---@type boolean
+mineWatcher.gpsAvailable = false
 ---@type ccTweaked.peripherals.Modem
 mineWatcher.modem = nil
 ---@type string
@@ -52,7 +54,7 @@ mineWatcher.statusName = {
 function mineWatcher:refreshWatcher()
     term.clear()
     term.setCursorPos(1, 1)
-    print("Miner GPS List: ")
+    print("Miners GPS List: ")
 
     for id, data in pairs(self.minerGPSList) do
         print(string.format("ID %d:\n  Pos - %s\n  Status - %s\n  Fuel - %s", id, data.currentPosition,
@@ -74,6 +76,10 @@ function mineWatcher:redNetSetup()
     self.modem = modem
 end
 
+function mineWatcher:gpsCheck()
+    return gps.locate(2, false) and true or false
+end
+
 function mineWatcher:init()
     self:redNetSetup()
 
@@ -82,8 +88,18 @@ function mineWatcher:init()
     print("Trying get miner gps infos...")
 
     while true do
-        self:handleMessage()
-        self:refreshWatcher()
+        self.gpsAvailable = self:gpsCheck()
+
+        if self.gpsAvailable then
+            self:handleMessage()
+            self:refreshWatcher()
+            sleep(0)
+        else
+            term.clear()
+            term.setCursorPos(1, 1)
+            printError("GPS is not Available!")
+            sleep(10)
+        end
     end
 end
 
