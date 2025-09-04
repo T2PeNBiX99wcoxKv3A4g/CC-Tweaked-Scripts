@@ -33,7 +33,11 @@ function autoDoorClient:redNetSetup()
     local modem = peripheral.find("modem") --[[@as ccTweaked.peripherals.Modem|nil]]
     if not modem then return end
 
-    rednet.open(peripheral.getName(modem))
+    local modemSide = peripheral.getName(modem)
+
+    if not rednet.isOpen(modemSide) then
+        rednet.open(modemSide)
+    end
 
     self.modem = modem
 end
