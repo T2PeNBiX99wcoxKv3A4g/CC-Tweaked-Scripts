@@ -231,14 +231,29 @@ function mine:deleteSave()
     return self.saveHelper:delete()
 end
 
+function mine:gpsCheck()
+    return gps.locate(1, false) and true or false
+end
+
 function mine:broadcastGPSData()
-    if not settings.get(mineGPS.settingName, false) then return end
-    local gpsX, gpsY, gpsZ = gps.locate(2, false)
-    if not gpsX then return end
+    if self.gpsAvailable then
+        local gpsX, gpsY, gpsZ = gps.locate(2, false)
+        if gpsX then return end
+        ---@type mineGPS.data
+        local data = {
+            currentStatus = self.currentStatus,
+            currentPosition = vec3(gpsX, gpsY, gpsZ),
+            currentFuelLevel = turtle.getFuelLevel(),
+            currentStep = self.currentStep - 1,
+            maxStep = #self.steps
+        }
+        rednet.broadcast(data, mineGPS.protocol)
+        return
+    end
     ---@type mineGPS.data
     local data = {
         currentStatus = self.currentStatus,
-        currentPosition = vec3(gpsX, gpsY, gpsZ),
+        currentPosition = self.moveHelper.position:copy(),
         currentFuelLevel = turtle.getFuelLevel(),
         currentStep = self.currentStep - 1,
         maxStep = #self.steps
@@ -274,6 +289,7 @@ function mine:init()
     hook.add("moveHelper.onDirectionChanged", self, self.onDirectionChanged)
     hook.add("moveHelper.onPositionChanged", self, self.onPositionChanged)
 
+    self.gpsAvailable = self:gpsCheck()
     self:broadcastGPSData()
 
     if settings.get(mineGPS.settingName, false) then

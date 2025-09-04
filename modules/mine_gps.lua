@@ -62,7 +62,7 @@ function mineGPS:redNetSetup()
 end
 
 function mineGPS:gpsCheck()
-    return gps.locate(2, false) and true or false
+    return gps.locate(1, false) and true or false
 end
 
 function mineGPS:handleMessage()
@@ -124,7 +124,7 @@ function mineGPS:init()
 
     term.clear()
     term.setCursorPos(1, 1)
-    print("Trying get miner gps infos...")
+    print("Trying get miner infos...")
 
     while true do
         self.gpsAvailable = self:gpsCheck()
@@ -134,17 +134,10 @@ function mineGPS:init()
             settings.save()
         end
 
-        if self.gpsAvailable then
-            self:handleMessage()
-            self:refreshWatcher()
-            self:saveGPSList()
-            sleep(0)
-        else
-            term.clear()
-            term.setCursorPos(1, 1)
-            printError("GPS is not Available!")
-            sleep(10)
-        end
+        self:handleMessage()
+        self:refreshWatcher()
+        self:saveGPSList()
+        sleep(0)
     end
 end
 
