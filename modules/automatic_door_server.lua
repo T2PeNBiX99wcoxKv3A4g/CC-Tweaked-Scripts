@@ -104,8 +104,6 @@ local sideCheck = {
 }
 
 function autoDoorServer:init()
-    self:redNetSetup()
-
     local config = self.configHelper:load()
 
     if config and utils.tableKeyCheck(config, configCheck) then
@@ -144,6 +142,8 @@ function autoDoorServer:init()
         self.configHelper:delete()
         self.configHelper:save(configTable)
     end
+
+    self:redNetSetup()
 
     term.clear()
     term.setCursorPos(1, 1)
