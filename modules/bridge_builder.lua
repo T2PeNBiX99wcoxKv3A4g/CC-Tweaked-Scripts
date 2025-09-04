@@ -4,6 +4,7 @@ local moveHelper = require("modules.move_helper")
 local fileHelper = require("modules.file_helper")
 local refuelHelper = require("modules.refuel_helper")
 local logHelper = require("modules.log_helper")
+local utils = require("modules.utils")
 
 ---@class bridgeBuilder
 local bridgeBuilder = class("bridgeBuilder")
@@ -210,8 +211,17 @@ function bridgeBuilder:tick()
     end
 end
 
+---@class bridgeBuilder.save
+---@field initPos vec3
+---@field initDirection moveHelper.directions
+---@field progressPosition vec3|nil
+---@field position vec3
+---@field direction moveHelper.directions
+---@field currentStatus bridgeBuilder.status
+
 ---@return boolean
 function bridgeBuilder:save()
+    ---@type bridgeBuilder.save
     local data = {
         initPos = self.initPos:copy(),
         initDirection = self.initDirection,
@@ -223,6 +233,14 @@ function bridgeBuilder:save()
     return self.saveHelper:save(data)
 end
 
+local dataCheck = {
+    "initPos",
+    "initDirection",
+    "position",
+    "direction",
+    "currentStatus"
+}
+
 ---@return boolean
 function bridgeBuilder:load()
     local data = self.saveHelper:load()
@@ -230,17 +248,19 @@ function bridgeBuilder:load()
         self:deleteSave()
         return false
     end
-    if not data.initPos or not data.initDirection or not data.position or not data.direction or not data.currentStatus then
+    if not utils.tableKeyCheck(data, dataCheck) then
         self:deleteSave()
         return false
     end
 
-    self.initPos = vec3.fromTable(data.initPos) or vec3.zero()
-    self.initDirection = data.initDirection
-    self.progressPosition = data.progressPosition and vec3.fromTable(data.progressPosition) or nil
-    self.moveHelper.position = vec3.fromTable(data.position) or vec3.zero()
-    self.moveHelper.direction = data.direction
-    self.currentStatus = data.currentStatus
+    local validData = data --[[@as bridgeBuilder.save]]
+
+    self.initPos = vec3.fromTable(validData.initPos) or vec3.zero()
+    self.initDirection = validData.initDirection
+    self.progressPosition = validData.progressPosition and vec3.fromTable(validData.progressPosition) or nil
+    self.moveHelper.position = vec3.fromTable(validData.position) or vec3.zero()
+    self.moveHelper.direction = validData.direction
+    self.currentStatus = validData.currentStatus
 
     return true
 end

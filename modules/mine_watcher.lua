@@ -76,6 +76,7 @@ function mineWatcher:redNetSetup()
     self.modem = modem
 end
 
+---@return boolean
 function mineWatcher:gpsCheck()
     return gps.locate(1, false) and true or false
 end

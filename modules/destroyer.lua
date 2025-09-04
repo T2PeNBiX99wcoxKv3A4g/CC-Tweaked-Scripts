@@ -133,8 +133,22 @@ function destroyer:tick()
     end
 end
 
+---@class destroyer.save
+---@field length number
+---@field width number
+---@field height number
+---@field initPos vec3
+---@field initDirection moveHelper.directions
+---@field position vec3
+---@field direction moveHelper.directions
+---@field steps vec3[]
+---@field currentStep number
+---@field currentStatus destroyer.status
+---@field currentMode destroyer.modes
+
 ---@return boolean
 function destroyer:save()
+    ---@type destroyer.save
     local data = {
         length = self.length,
         width = self.width,
@@ -177,24 +191,27 @@ function destroyer:load()
         return false
     end
 
-    self.length = data.length
-    self.width = data.width
-    self.height = data.height
-    self.initPos = vec3.fromTable(data.initPos) or vec3.zero()
-    self.initDirection = data.initDirection
-    self.moveHelper.position = vec3.fromTable(data.position) or vec3.zero()
-    self.moveHelper.direction = data.direction
+    local validData = data --[[@as destroyer.save]]
 
+    self.length = validData.length
+    self.width = validData.width
+    self.height = validData.height
+    self.initPos = vec3.fromTable(validData.initPos) or vec3.zero()
+    self.initDirection = validData.initDirection
+    self.moveHelper.position = vec3.fromTable(validData.position) or vec3.zero()
+    self.moveHelper.direction = validData.direction
+
+    ---@type vec3[]
     local newSteps = {}
 
-    for index, value in ipairs(data.steps) do
+    for index, value in ipairs(validData.steps) do
         newSteps[index] = vec3.fromTable(value)
     end
 
     self.steps = newSteps
-    self.currentStep = data.currentStep
-    self.currentStatus = data.currentStatus
-    self.currentMode = data.currentMode
+    self.currentStep = validData.currentStep
+    self.currentStatus = validData.currentStatus
+    self.currentMode = validData.currentMode
 
     return true
 end
@@ -228,6 +245,19 @@ destroyer.modesSteps = {
     end
 }
 
+---@class destroyer.config
+---@field length number
+---@field height number
+---@field width number
+---@field attackSide string
+
+local configCheck = {
+    "length",
+    "height",
+    "width",
+    "attackSide"
+}
+
 function destroyer:init()
     hook.add("moveHelper.onDirectionChanged", self, self.onDirectionChanged)
     hook.add("moveHelper.onPositionChanged", self, self.onPositionChanged)
@@ -240,12 +270,14 @@ function destroyer:init()
 
         local config = self.dataHelper:load()
 
-        if config and config.length and config.width and config.height and config.attackSide then
-            self.length = config.size
-            self.height = config.height
-            self.width = config.width
-            self.attackSide = config.attackSide
+        if config and utils.tableKeyCheck(config, configCheck) then
+            local validConfig = config --[[@as destroyer.config]]
+            self.length = validConfig.length
+            self.height = validConfig.height
+            self.width = validConfig.width
+            self.attackSide = validConfig.attackSide
         else
+            ---@type destroyer.config
             local configTable = {
                 length = self.length,
                 height = self.height,

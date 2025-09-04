@@ -160,8 +160,22 @@ function mine:tick()
     end
 end
 
+---@class mine.save
+---@field length number
+---@field width number
+---@field height number
+---@field initPos vec3
+---@field initDirection moveHelper.directions
+---@field position vec3
+---@field direction moveHelper.directions
+---@field steps vec3[]
+---@field currentStep number
+---@field currentStatus mine.status
+---@field currentMode mine.modes
+
 ---@return boolean
 function mine:save()
+    ---@type mine.save
     local data = {
         length = self.length,
         width = self.width,
@@ -204,17 +218,20 @@ function mine:load()
         return false
     end
 
-    self.length = data.length
-    self.width = data.width
-    self.height = data.height
-    self.initPos = vec3.fromTable(data.initPos) or vec3.zero()
-    self.initDirection = data.initDirection
-    self.moveHelper.position = vec3.fromTable(data.position) or vec3.zero()
-    self.moveHelper.direction = data.direction
+    local validData = data --[[@as mine.save]]
 
+    self.length = validData.length
+    self.width = validData.width
+    self.height = validData.height
+    self.initPos = vec3.fromTable(validData.initPos) or vec3.zero()
+    self.initDirection = validData.initDirection
+    self.moveHelper.position = vec3.fromTable(validData.position) or vec3.zero()
+    self.moveHelper.direction = validData.direction
+
+    ---@type vec3[]
     local newSteps = {}
 
-    for index, value in ipairs(data.steps) do
+    for index, value in ipairs(validData.steps) do
         newSteps[index] = vec3.fromTable(value)
     end
 
@@ -231,6 +248,7 @@ function mine:deleteSave()
     return self.saveHelper:delete()
 end
 
+---@return boolean
 function mine:gpsCheck()
     return gps.locate(1, false) and true or false
 end

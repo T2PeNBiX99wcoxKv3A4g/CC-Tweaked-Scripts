@@ -19,10 +19,23 @@ elevator.moveHelper = moveHelper(elevator)
 function elevator:heightLevelControl()
     term.clear()
     term.setCursorPos(1, 1)
-    print("Enter height increase (-1 will descent height): ")
+    print("Enter height increase (-1 will descent height, 'back' will go back to the first height level): ")
     write("> ")
 
-    local highLevel = tonumber(read()) or 1
+    local inputValue = read()
+
+    if inputValue == "back" then
+        term.clear()
+        term.setCursorPos(1, 1)
+
+        logHelper.title("Elevator")
+        logHelper.progress("Height level reset")
+
+        self.moveHelper:moveTo(self.initPos:copy())
+        return
+    end
+
+    local highLevel = tonumber(inputValue) or 1
 
     term.clear()
     term.setCursorPos(1, 1)

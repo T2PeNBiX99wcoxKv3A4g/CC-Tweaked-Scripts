@@ -61,6 +61,7 @@ function mineGPS:redNetSetup()
     self.modem = modem
 end
 
+---@return boolean
 function mineGPS:gpsCheck()
     return gps.locate(1, false) and true or false
 end

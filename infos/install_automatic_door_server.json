@@ -12,39 +12,27 @@
         "path": "/modules/hook.lua"
     },
     {
-        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/log_helper.lua",
-        "path": "/modules/log_helper.lua"
-    },
-    {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/file_helper.lua",
         "path": "/modules/file_helper.lua"
-    },
-    {
-        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/refuel_helper.lua",
-        "path": "/modules/refuel_helper.lua"
-    },
-    {
-        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/move_helper.lua",
-        "path": "/modules/move_helper.lua"
     },
     {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/utils.lua",
         "path": "/modules/utils.lua"
     },
     {
-        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/bridge_builder.lua",
-        "path": "/modules/bridge_builder.lua"
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/automatic_door_server.lua",
+        "path": "/modules/automatic_door_server.lua"
     },
     {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/global.lua",
         "path": "/modules/global.lua"
     },
     {
-        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/startup/startup_bridge_builder.lua",
-        "path": "/startup/99_bridge_builder.lua"
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/startup/startup_automatic_door_server.lua",
+        "path": "/startup/99_automatic_door_server.lua"
     },
     {
-        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/bin/bridge_builder.lua",
-        "path": "/bin/bridge_builder.lua"
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/bin/automatic_door_server.lua",
+        "path": "/bin/automatic_door_server.lua"
     }
 ]

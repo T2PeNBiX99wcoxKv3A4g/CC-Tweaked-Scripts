@@ -26,5 +26,21 @@
     "elevator": {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_elevator.json",
         "path": "install_elevator.json"
+    },
+    "automatic_door_client": {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_automatic_door_client.json",
+        "path": "install_automatic_door_client.json"
+    },
+    "automatic_door_server": {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_automatic_door_server.json",
+        "path": "install_automatic_door_server.json"
+    },
+    "distance_test_client": {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_distance_test_client.json",
+        "path": "install_distance_test_client.json"
+    },
+    "distance_test_server": {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_distance_test_server.json",
+        "path": "install_distance_test_server.json"
     }
 }

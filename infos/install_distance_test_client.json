@@ -1,0 +1,34 @@
+[
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/class.lua",
+        "path": "/modules/class.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/vector3.lua",
+        "path": "/modules/vector3.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/hook.lua",
+        "path": "/modules/hook.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/utils.lua",
+        "path": "/modules/utils.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/distance_test_client.lua",
+        "path": "/modules/distance_test_client.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/global.lua",
+        "path": "/modules/global.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/startup/startup_distance_test_client.lua",
+        "path": "/startup/99_distance_test_client.lua"
+    },
+    {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/bin/distance_test_client.lua",
+        "path": "/bin/distance_test_client.lua"
+    }
+]
