@@ -26,7 +26,7 @@ local messageCheck = {
 }
 
 function mineWatcher:handleMessage()
-    local id, message = rednet.receive(self.protocol, self.timeOutSeconds)
+    local id, message = rednet.receive(self.protocol)
     if not id then return end
     if type(message) ~= "table" or not utils.tableKeyCheck(message, messageCheck) then return end
     local gpsMsg = message --[[@as mineGPS.message]]
@@ -60,18 +60,12 @@ function mineWatcher:refreshWatcher()
     print("Miners GPS List: ")
 
     for id, data in pairs(self.minerGPSList) do
-        if data.timeOutTime < os.clock() then
-            table.remove(self.minerGPSList, id)
-            goto continue
-        end
-
         print(string.format("ID %d:\n  Pos - %s\n  Status - %s\n  Fuel - %s", id, data.currentPosition,
             self.statusName[data.currentStatus + 1] or "unknown", data.currentFuelLevel))
 
         if data.currentStatus > 0 then
             print(string.format("  Step %d/%d", data.currentStep, data.maxStep))
         end
-        ::continue::
     end
 end
 
