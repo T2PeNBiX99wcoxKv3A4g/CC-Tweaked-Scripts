@@ -23,7 +23,7 @@ autoDoorServer.openDistance = 3
 ---@type string
 autoDoorServer.outPutSide = "top"
 ---@type number
-autoDoorServer.timeOutSeconds = 2
+autoDoorServer.timeOutSeconds = 5
 
 ---@class autoDoorServer.data
 ---@field currentPosition vec3
@@ -35,7 +35,7 @@ local messageCheck = {
 }
 
 function autoDoorServer:handleMessage()
-    local id, message = rednet.receive(self.protocol, 2)
+    local id, message = rednet.receive(self.protocol, 5)
     if not id then return end
     if type(message) ~= "table" or not utils.tableKeyCheck(message, messageCheck) then return end
     local gpsMsg = message --[[@as autoDoorClient.message]]
