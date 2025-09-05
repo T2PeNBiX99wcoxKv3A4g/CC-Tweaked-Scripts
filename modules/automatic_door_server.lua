@@ -35,7 +35,7 @@ local messageCheck = {
 }
 
 function autoDoorServer:handleMessage()
-    local id, message = rednet.receive(self.protocol, 5)
+    local id, message = rednet.receive(self.protocol, self.timeOutSeconds)
     if not id then return end
     if type(message) ~= "table" or not utils.tableKeyCheck(message, messageCheck) then return end
     local gpsMsg = message --[[@as autoDoorClient.message]]
