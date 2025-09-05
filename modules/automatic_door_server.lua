@@ -19,7 +19,7 @@ autoDoorServer.positionList = {}
 ---@type fileHelper
 autoDoorServer.configHelper = fileHelper(fileHelper.type.data, "automatic_door.json")
 ---@type number
-autoDoorServer.openDistance = 20
+autoDoorServer.openDistance = 3
 ---@type string
 autoDoorServer.outPutSide = "top"
 ---@type number
@@ -67,7 +67,7 @@ function autoDoorServer:checkPosition()
 
         print(string.format("ID %d:\n  Pos - %s\n  Distance - %d", id, data.currentPosition, distance))
 
-        if distance < self.openDistance then
+        if distance <= self.openDistance then
             shouldOpen = true
         end
         ::continue::
