@@ -11,7 +11,9 @@ mineWatcher.gpsAvailable = false
 mineWatcher.modem = nil
 ---@type string
 mineWatcher.protocol = "mineGPS"
----@type table<number, mineGPS.data>
+---@type number
+mineWatcher.timeOutSeconds = 2
+---@type table<number, mineGPSServer.data>
 mineWatcher.minerGPSList = {}
 
 ---@type string[]
@@ -28,13 +30,14 @@ function mineWatcher:handleMessage()
     if not id then return end
     if type(message) ~= "table" or not utils.tableKeyCheck(message, messageCheck) then return end
     local gpsMsg = message --[[@as mineGPS.message]]
-    ---@type mineGPS.data
+    ---@type mineGPSServer.data
     local data = {
         currentStatus = gpsMsg.currentStatus,
         currentPosition = vec3.fromTable(gpsMsg.currentPosition) or vec3.zero(),
         currentFuelLevel = gpsMsg.currentFuelLevel,
         currentStep = gpsMsg.currentStep,
-        maxStep = gpsMsg.maxStep
+        maxStep = gpsMsg.maxStep,
+        timeOutTime = os.clock() + self.timeOutSeconds
     }
 
     self.minerGPSList[id] = data
@@ -57,12 +60,18 @@ function mineWatcher:refreshWatcher()
     print("Miners GPS List: ")
 
     for id, data in pairs(self.minerGPSList) do
+        if data.timeOutTime < os.clock() then
+            table.remove(self.minerGPSList, id)
+            goto continue
+        end
+
         print(string.format("ID %d:\n  Pos - %s\n  Status - %s\n  Fuel - %s", id, data.currentPosition,
             self.statusName[data.currentStatus + 1] or "unknown", data.currentFuelLevel))
 
         if data.currentStatus > 0 then
             print(string.format("  Step %d/%d", data.currentStep, data.maxStep))
         end
+        ::continue::
     end
 end
 

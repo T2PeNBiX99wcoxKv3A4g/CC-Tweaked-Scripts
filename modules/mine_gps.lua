@@ -23,7 +23,9 @@ mineGPS.modem = nil
 mineGPS.protocol = "mineGPS"
 ---@type string
 mineGPS.settingName = "mineGPS.gpsAvailable"
----@type table<number, mineGPS.data>
+---@type number
+mineGPS.timeOutSeconds = 2
+---@type table<number, mineGPSServer.data>
 mineGPS.minerGPSList = {}
 ---@type fileHelper
 mineGPS.gpsHelper = fileHelper(fileHelper.type.save, "mine_gps_list.json")
@@ -34,6 +36,14 @@ mineGPS.gpsHelper = fileHelper(fileHelper.type.save, "mine_gps_list.json")
 ---@field currentFuelLevel number|"unlimited"
 ---@field currentStep number
 ---@field maxStep number
+
+---@class mineGPSServer.data
+---@field currentStatus mine.status
+---@field currentPosition vec3
+---@field currentFuelLevel number|"unlimited"
+---@field currentStep number
+---@field maxStep number
+---@field timeOutTime number
 
 ---@class mineGPS.message
 ---@field currentStatus mine.status
@@ -75,13 +85,14 @@ function mineGPS:handleMessage()
     if not id then return end
     if type(message) ~= "table" or not utils.tableKeyCheck(message, messageCheck) then return end
     local gpsMsg = message --[[@as mineGPS.message]]
-    ---@type mineGPS.data
+    ---@type mineGPSServer.data
     local data = {
         currentStatus = gpsMsg.currentStatus,
         currentPosition = vec3.fromTable(gpsMsg.currentPosition) or vec3.zero(),
         currentFuelLevel = gpsMsg.currentFuelLevel,
         currentStep = gpsMsg.currentStep,
-        maxStep = gpsMsg.maxStep
+        maxStep = gpsMsg.maxStep,
+        timeOutTime = os.clock() + self.timeOutSeconds
     }
 
     self.minerGPSList[id] = data
@@ -104,12 +115,18 @@ function mineGPS:refreshWatcher()
     print("Other Miners GPS List: ")
 
     for id, data in pairs(self.minerGPSList) do
+        if data.timeOutTime < os.clock() then
+            table.remove(self.minerGPSList, id)
+            goto continue
+        end
+
         print(string.format("ID %d:\n  Pos - %s\n  Status - %s\n  Fuel - %s", id, data.currentPosition,
             self.statusName[data.currentStatus + 1] or "unknown", data.currentFuelLevel))
 
         if data.currentStatus > 0 then
             print(string.format("  Step %d/%d", data.currentStep, data.maxStep))
         end
+        ::continue::
     end
 end
 
