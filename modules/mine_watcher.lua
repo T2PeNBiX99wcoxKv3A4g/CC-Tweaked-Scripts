@@ -12,7 +12,7 @@ mineWatcher.modem = nil
 ---@type string
 mineWatcher.protocol = "mineGPS"
 ---@type number
-mineWatcher.timeOutSeconds = 5
+mineWatcher.timeOutSeconds = 10
 ---@type table<number, mineGPSServer.data>
 mineWatcher.minerGPSList = {}
 

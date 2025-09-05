@@ -24,7 +24,7 @@ mineGPS.protocol = "mineGPS"
 ---@type string
 mineGPS.settingName = "mineGPS.gpsAvailable"
 ---@type number
-mineGPS.timeOutSeconds = 5
+mineGPS.timeOutSeconds = 10
 ---@type table<number, mineGPSServer.data>
 mineGPS.minerGPSList = {}
 ---@type fileHelper
