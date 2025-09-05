@@ -326,27 +326,27 @@ function mine:init()
 
         term.clear()
         term.setCursorPos(1, 1)
-        print("Enter the length of the cube to mine (default 5): ")
+        print(("Enter the length of the cube to mine (default %d): "):format(self.length))
         write("> ")
-        local length = tonumber(read()) or 5
+        local length = tonumber(read()) or self.length
 
         term.clear()
         term.setCursorPos(1, 1)
-        print("Enter the width of the cube to mine (default 5): ")
+        print(("Enter the width of the cube to mine (default %d): "):format(self.width))
         write("> ")
-        local width = tonumber(read()) or 5
+        local width = tonumber(read()) or self.width
 
         term.clear()
         term.setCursorPos(1, 1)
-        print("Enter the height of the cube to mine (default 11): ")
+        print(("Enter the height of the cube to mine (default %d): "):format(self.height))
         write("> ")
-        local height = tonumber(read()) or 11
+        local height = tonumber(read()) or self.height
 
         term.clear()
         term.setCursorPos(1, 1)
-        print("Enter the mine mode, 0 = down, 1 = forward, 2 = up (default 0): ")
+        print(("Enter the mine mode, 0 = down, 1 = forward, 2 = up (default %d): "):format(self.currentMode))
         write("> ")
-        local mode = tonumber(read()) or 0
+        local mode = tonumber(read()) or self.currentMode
 
         term.clear()
         term.setCursorPos(1, 1)

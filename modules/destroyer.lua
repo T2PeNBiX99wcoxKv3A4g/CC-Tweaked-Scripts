@@ -291,9 +291,9 @@ function destroyer:init()
 
         term.clear()
         term.setCursorPos(1, 1)
-        print("Enter the mine mode, 0 = forward, 1 = down, 2 = up (default 0): ")
+        print(("Enter the mine mode, 0 = forward, 1 = down, 2 = up (default %d): "):format(self.currentMode))
         write("> ")
-        local mode = tonumber(read()) or 0
+        local mode = tonumber(read()) or self.currentMode
 
         term.clear()
         term.setCursorPos(1, 1)

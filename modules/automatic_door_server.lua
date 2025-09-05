@@ -133,27 +133,27 @@ function autoDoorServer:init()
     else
         term.clear()
         term.setCursorPos(1, 1)
-        print("Enter the distance will open the door (default 20): ")
+        print(("Enter the distance will open the door (default %d): "):format(self.openDistance))
         write("> ")
         local openDistance = tonumber(read()) or self.openDistance
 
         term.clear()
         term.setCursorPos(1, 1)
-        print("Enter the output side to open door (default 'top'): ")
+        print(("Enter the output side to open door (default '%s'): "):format(self.outPutSide))
         write("> ")
         local outPutSide = read()
         outPutSide = sideCheck[outPutSide] and outPutSide or self.outPutSide
 
         term.clear()
         term.setCursorPos(1, 1)
-        print("Enter the host name to server (default 'myAutoDoor'): ")
+        print(("Enter the host name to server (default '%s'): "):format(self.hostName))
         write("> ")
         local hostName = read()
         hostName = #hostName > 0 and hostName or self.hostName
 
         term.clear()
         term.setCursorPos(1, 1)
-        print("Enter the time out seconds of GPS info (default 2): ")
+        print(("Enter the time out seconds of GPS info (default %d): "):format(self.timeOutSeconds))
         write("> ")
         local timeOutSeconds = tonumber(read()) or self.timeOutSeconds
 
