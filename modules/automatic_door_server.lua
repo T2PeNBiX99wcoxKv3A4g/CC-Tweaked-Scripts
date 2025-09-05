@@ -51,8 +51,11 @@ function autoDoorServer:checkPosition()
     local gpsPosition = vec3(gps.locate(2, false))
 
     for id, data in pairs(self.positionList) do
-        print(string.format("ID %d:\n  Pos - %s", id, data.currentPosition))
-        if data.currentPosition:distanceTo(gpsPosition) < self.openDistance then
+        local distance = data.currentPosition:distanceTo(gpsPosition)
+
+        print(string.format("ID %d:\n  Pos - %s\n  Distance - %d", id, data.currentPosition, distance))
+
+        if distance < self.openDistance then
             shouldOpen = true
         end
     end

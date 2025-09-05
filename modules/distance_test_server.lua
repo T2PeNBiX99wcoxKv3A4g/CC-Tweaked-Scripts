@@ -43,7 +43,7 @@ function distanceTestServer:checkPosition()
     local gpsPosition = vec3(gps.locate(2, false))
 
     for id, data in pairs(self.positionList) do
-        print(string.format("ID %d:\n  Pos - %s Distance - %d", id, data.currentPosition,
+        print(string.format("ID %d:\n  Pos - %s\n  Distance - %d", id, data.currentPosition,
             data.currentPosition:distanceTo(gpsPosition)))
     end
 end
