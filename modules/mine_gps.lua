@@ -24,7 +24,7 @@ mineGPS.protocol = "mineGPS"
 ---@type string
 mineGPS.settingName = "mineGPS.gpsAvailable"
 ---@type number
-mineGPS.timeOutSeconds = 2
+mineGPS.timeOutSeconds = 5
 ---@type table<number, mineGPSServer.data>
 mineGPS.minerGPSList = {}
 ---@type fileHelper
@@ -81,7 +81,7 @@ function mineGPS:gpsCheck()
 end
 
 function mineGPS:handleMessage()
-    local id, message = rednet.receive(self.protocol, 2)
+    local id, message = rednet.receive(self.protocol, self.timeOutSeconds)
     if not id then return end
     if type(message) ~= "table" or not utils.tableKeyCheck(message, messageCheck) then return end
     local gpsMsg = message --[[@as mineGPS.message]]
