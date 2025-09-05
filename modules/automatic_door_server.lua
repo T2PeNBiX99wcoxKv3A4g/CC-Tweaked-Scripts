@@ -14,7 +14,7 @@ autoDoorServer.modem = nil
 autoDoorServer.protocol = "autoDoor"
 ---@type string
 autoDoorServer.hostName = "myAutoDoor"
----@type table<number, autoDoorClient.data>
+---@type table<number, autoDoorServer.data>
 autoDoorServer.positionList = {}
 ---@type fileHelper
 autoDoorServer.configHelper = fileHelper(fileHelper.type.data, "automatic_door.json")
@@ -22,6 +22,12 @@ autoDoorServer.configHelper = fileHelper(fileHelper.type.data, "automatic_door.j
 autoDoorServer.openDistance = 20
 ---@type string
 autoDoorServer.outPutSide = "top"
+---@type number
+autoDoorServer.timeOutSeconds = 2
+
+---@class autoDoorServer.data
+---@field currentPosition vec3
+---@field timeOutTime number
 
 ---@type string[]
 local messageCheck = {
@@ -33,9 +39,10 @@ function autoDoorServer:handleMessage()
     if not id then return end
     if type(message) ~= "table" or not utils.tableKeyCheck(message, messageCheck) then return end
     local gpsMsg = message --[[@as autoDoorClient.message]]
-    ---@type autoDoorClient.data
+    ---@type autoDoorServer.data
     local data = {
-        currentPosition = vec3.fromTable(gpsMsg.currentPosition) or vec3.zero()
+        currentPosition = vec3.fromTable(gpsMsg.currentPosition) or vec3.zero(),
+        timeOutTime = os.clock() + self.timeOutSeconds
     }
 
     self.positionList[id] = data
@@ -51,6 +58,11 @@ function autoDoorServer:checkPosition()
     local gpsPosition = vec3(gps.locate(2, false))
 
     for id, data in pairs(self.positionList) do
+        if data.timeOutTime < os.clock() then
+            table.remove(self.positionList, id)
+            goto continue
+        end
+
         local distance = data.currentPosition:distanceTo(gpsPosition)
 
         print(string.format("ID %d:\n  Pos - %s\n  Distance - %d", id, data.currentPosition, distance))
@@ -58,6 +70,7 @@ function autoDoorServer:checkPosition()
         if distance < self.openDistance then
             shouldOpen = true
         end
+        ::continue::
     end
 
     redstone.setOutput(self.outPutSide, shouldOpen)
@@ -88,12 +101,14 @@ end
 ---@field openDistance number
 ---@field outPutSide string
 ---@field hostName string
+---@field timeOutSeconds number
 
 ---@type string[]
 local configCheck = {
     "openDistance",
     "outPutSide",
-    "hostName"
+    "hostName",
+    "timeOutSeconds"
 }
 
 ---@type table<string, boolean>
@@ -114,6 +129,7 @@ function autoDoorServer:init()
         self.openDistance = validConfig.openDistance
         self.outPutSide = validConfig.outPutSide
         self.hostName = validConfig.hostName
+        self.timeOutSeconds = validConfig.timeOutSeconds
     else
         term.clear()
         term.setCursorPos(1, 1)
@@ -135,11 +151,18 @@ function autoDoorServer:init()
         local hostName = read()
         hostName = #hostName > 0 and hostName or self.hostName
 
+        term.clear()
+        term.setCursorPos(1, 1)
+        print("Enter the time out seconds of GPS info (default 2): ")
+        write("> ")
+        local timeOutSeconds = tonumber(read()) or self.timeOutSeconds
+
         ---@type autoDoorServer.config
         local configTable = {
             openDistance = openDistance,
             outPutSide = outPutSide,
-            hostName = hostName
+            hostName = hostName,
+            timeOutSeconds = timeOutSeconds
         }
 
         self.configHelper:delete()

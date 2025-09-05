@@ -19,6 +19,7 @@ autoDoorClient.protocol = "autoDoor"
 
 function autoDoorClient:sendMessage()
     local ids = { rednet.lookup(self.protocol) }
+    ---@type autoDoorClient.data
     local data = {
         currentPosition = vec3(gps.locate(2, false))
     }
