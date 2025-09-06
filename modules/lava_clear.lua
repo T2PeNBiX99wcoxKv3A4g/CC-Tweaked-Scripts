@@ -23,12 +23,13 @@ function lavaClear:init()
         term.setCursorPos(1, 1)
         print("Input 'y/yes' to clear up items")
         local ret = read()
-        if ret ~= "y" or ret ~= "yes" then
-            goto continue
+
+        print(ret)
+
+        if ret == "y" and ret == "yes" then
+            self:clearItems()
         end
 
-        self:clearItems()
-        ::continue::
         sleep(0)
     end
 end
