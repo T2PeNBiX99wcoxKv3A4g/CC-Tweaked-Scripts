@@ -42,5 +42,9 @@
     "distance_test_server": {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_distance_test_server.json",
         "path": "install_distance_test_server.json"
+    },
+    "lava_clear": {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_lava_clear.json",
+        "path": "install_lava_clear.json"
     }
 }
