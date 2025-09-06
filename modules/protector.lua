@@ -221,7 +221,7 @@ end
 function protector:tick()
     logHelper.progress(("Target: Pos: %s, UUID: %s"):format(self.lockTargetVec, self.lockTargetUuid))
 
-    while not self.lockTargetUuid and not self.lockTargetVec do
+    while not self.lockTargetUuid or not self.lockTargetVec do
         self:findTarget()
         sleep(0)
     end
@@ -235,8 +235,8 @@ function protector:tick()
 end
 
 ---@class protector.save
----@field lockTargetVec vec3Table
----@field lockTargetUuid string
+---@field lockTargetVec vec3Table|nil
+---@field lockTargetUuid string|nil
 ---@field initPos vec3Table
 ---@field initAngle angleTable
 ---@field position vec3Table
@@ -246,7 +246,7 @@ end
 function protector:save()
     ---@type protector.save
     local data = {
-        lockTargetVec = self.lockTargetVec:copy() --[[@as vec3Table]],
+        lockTargetVec = self.lockTargetVec and self.lockTargetVec:copy() or nil --[[@as vec3Table|nil]],
         lockTargetUuid = self.lockTargetUuid,
         initPos = self.initPos:copy() --[[@as vec3Table]],
         initAngle = self.initAngle:copy() --[[@as angleTable]],
@@ -279,7 +279,8 @@ function protector:load()
 
     local validData = data --[[@as protector.save]]
 
-    self.lockTargetVec = vec3.fromTable(validData.lockTargetVec) or vec3.zero()
+    self.lockTargetVec = (validData.lockTargetVec and vec3.fromTable(validData.lockTargetVec) or vec3.zero()) or
+        vec3:zero()
     self.lockTargetUuid = validData.lockTargetUuid
     self.initPos = vec3.fromTable(validData.initPos) or vec3.zero()
     self.initAngle = angle.fromTable(validData.initAngle) or angle.north()
