@@ -11,6 +11,7 @@ function lavaClear:clearItems()
         turtle.select(slot)
         self.lavaBucket.void()
     end
+    turtle.select(1)
 end
 
 function lavaClear:init()
