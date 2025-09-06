@@ -8,6 +8,10 @@
         "path": "/modules/vector3.lua"
     },
     {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/angle.lua",
+        "path": "/modules/angle.lua"
+    },
+    {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/modules/hook.lua",
         "path": "/modules/hook.lua"
     },

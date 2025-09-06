@@ -46,5 +46,9 @@
     "lava_clear": {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_lava_clear.json",
         "path": "install_lava_clear.json"
+    },
+    "protector": {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_protector.json",
+        "path": "install_protector.json"
     }
 }

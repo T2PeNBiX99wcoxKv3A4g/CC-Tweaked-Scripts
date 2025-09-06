@@ -1,5 +1,6 @@
 local class = require("modules.class")
 local vec3 = require("modules.vector3")
+local angle = require("modules.angle")
 local moveHelper = require("modules.move_helper")
 local fileHelper = require("modules.file_helper")
 local refuelHelper = require("modules.refuel_helper")
@@ -37,8 +38,8 @@ destroyer.width = 2
 destroyer.attackSide = "right"
 ---@type vec3
 destroyer.initPos = vec3(0, 0, 0)
----@type moveHelper.directions
-destroyer.initDirection = moveHelper.directions.north
+---@type angle
+destroyer.initAngle = angle.north()
 ---@type vec3[]
 destroyer.steps = {}
 ---@type number
@@ -71,11 +72,11 @@ function destroyer:backToStartPos()
 end
 
 function destroyer:turnToStartDirection()
-    self.moveHelper:turnTo(self.initDirection)
+    self.moveHelper:turnTo(self.initAngle)
 end
 
 function destroyer:dropItemToChest()
-    self.moveHelper:turnTo(moveHelper.directions.south)
+    self.moveHelper:turnTo(angle.south())
 
     for i = 1, 16 do
         local item = turtle.getItemDetail(i)
@@ -137,11 +138,11 @@ end
 ---@field length number
 ---@field width number
 ---@field height number
----@field initPos vec3
----@field initDirection moveHelper.directions
----@field position vec3
----@field direction moveHelper.directions
----@field steps vec3[]
+---@field initPos vec3Table
+---@field initAngle angleTable
+---@field position vec3Table
+---@field angle angleTable
+---@field steps vec3Table[]
 ---@field currentStep number
 ---@field currentStatus destroyer.status
 ---@field currentMode destroyer.modes
@@ -153,10 +154,10 @@ function destroyer:save()
         length = self.length,
         width = self.width,
         height = self.height,
-        initPos = self.initPos:copy(),
-        initDirection = self.initDirection,
-        position = self.moveHelper.position:copy(),
-        direction = self.moveHelper.direction,
+        initPos = self.initPos:copy() --[[@as vec3Table]],
+        initAngle = self.initAngle:copy() --[[@as angleTable]],
+        position = self.moveHelper.position:copy() --[[@as vec3Table]],
+        angle = self.moveHelper.angle:copy() --[[@as angleTable]],
         steps = self.steps,
         currentStep = self.currentStep,
         currentStatus = self.currentStatus,
@@ -170,9 +171,9 @@ local dataCheck = {
     "width",
     "height",
     "initPos",
-    "initDirection",
+    "initAngle",
     "position",
-    "direction",
+    "angle",
     "steps",
     "currentStep",
     "currentStatus",
@@ -197,9 +198,9 @@ function destroyer:load()
     self.width = validData.width
     self.height = validData.height
     self.initPos = vec3.fromTable(validData.initPos) or vec3.zero()
-    self.initDirection = validData.initDirection
+    self.initAngle = angle.fromTable(validData.initAngle) or angle.north()
     self.moveHelper.position = vec3.fromTable(validData.position) or vec3.zero()
-    self.moveHelper.direction = validData.direction
+    self.moveHelper.angle = angle.fromTable(validData.angle) or angle.north()
 
     ---@type vec3[]
     local newSteps = {}
@@ -221,8 +222,8 @@ function destroyer:deleteSave()
     return self.saveHelper:delete()
 end
 
----@param newDirection moveHelper.directions
-function destroyer:onDirectionChanged(newDirection)
+---@param newAngle angle
+function destroyer:onDirectionChanged(newAngle)
     turtle.attack(self.attackSide)
     self:save()
 end
@@ -264,9 +265,16 @@ function destroyer:init()
 
     if self:load() then
         logHelper.massage("Loaded previous state. Resuming mining operation...")
+
+        local config = self.dataHelper:load()
+
+        if config and utils.tableKeyCheck(config, configCheck) then
+            local validConfig = config --[[@as destroyer.config]]
+            self.attackSide = validConfig.attackSide
+        end
     else
         self.initPos = self.moveHelper.position:copy()
-        self.initDirection = self.moveHelper.direction
+        self.initAngle = self.moveHelper.angle:copy()
 
         local config = self.dataHelper:load()
 

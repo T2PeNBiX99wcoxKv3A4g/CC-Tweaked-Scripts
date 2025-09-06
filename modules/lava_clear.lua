@@ -3,7 +3,7 @@ local class = require("modules.class")
 ---@class lavaClear
 local lavaClear = class("lavaClear")
 
----@type lavaBucket
+---@type turtleMatic.lavaBucket
 lavaClear.lavaBucket = nil
 
 function lavaClear:clearItems()
@@ -17,7 +17,7 @@ end
 function lavaClear:init()
     ---@diagnostic disable-next-line: param-type-mismatch
     self.lavaBucket = assert(peripheral.find("lava_bucket"),
-        "Lava bucket is not found! Please install 'Turtlematic' then put lava bucket inside") --[[@as lavaBucket]]
+        "Lava bucket is not found! Please install 'Turtlematic' then put lava bucket inside") --[[@as turtleMatic.lavaBucket]]
 
     while true do
         term.clear()

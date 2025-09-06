@@ -1,5 +1,6 @@
 local class = require("modules.class")
 local vec3 = require("modules.vector3")
+local angle = require("modules.angle")
 local moveHelper = require("modules.move_helper")
 local refuelHelper = require("modules.refuel_helper")
 local logHelper = require("modules.log_helper")
@@ -9,8 +10,8 @@ local elevator = class("elevator")
 
 ---@type vec3
 elevator.initPos = vec3(0, 0, 0)
----@type moveHelper.directions
-elevator.initDirection = moveHelper.directions.north
+---@type angle
+elevator.initAngle = angle.north()
 ---@type refuelHelper
 elevator.refuelHelper = refuelHelper()
 ---@type moveHelper
@@ -48,7 +49,7 @@ end
 
 function elevator:init()
     self.initPos = self.moveHelper.position:copy()
-    self.initDirection = self.moveHelper.direction
+    self.initAngle = self.moveHelper.angle:copy()
 
     while true do
         self:heightLevelControl()

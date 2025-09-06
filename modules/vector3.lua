@@ -305,6 +305,36 @@ function vec3:manhattanDistanceTo(other)
     return math.abs(self.x - other.x) + math.abs(self.y - other.y) + math.abs(self.z - other.z)
 end
 
+---@param other vec3
+---@return number
+function vec3:angleBetween(other)
+    local dot = self:dot(other)
+    local mag1 = self:length()
+    local mag2 = other:length()
+    return math.acos(dot / (mag1 * mag2))
+end
+
+---@param angle number
+---@return vec3
+function vec3:rotateVector(angle)
+    local rotatedX = self.x * math.cos(angle) - self.z * math.sin(angle)
+    local rotatedZ = self.x * math.sin(angle) + self.z * math.cos(angle)
+    return vec3(rotatedX, self.y, rotatedZ)
+end
+
+---@param dir angle.directions
+---@return vec3
+function vec3:rotateVectorInDirection(dir)
+    return self:rotateVector(dir * math.pi / 2)
+end
+
+---@param fromDirection angle
+---@param toDirection angle
+function vec3:convertRelativeVector(fromDirection, toDirection)
+    local rotation = fromDirection:getRotationDirection(toDirection)
+    return self:rotateVectorInDirection(rotation)
+end
+
 ---@return boolean
 function vec3:isZero()
     return self.x == 0 and self.y == 0 and self.z == 0
@@ -320,7 +350,7 @@ function vec3:isNilOrZero()
     return self:isNil() or self:isZero()
 end
 
----@param vecTable table
+---@param vecTable vec3Table
 ---@return vec3|nil
 function vec3.fromTable(vecTable)
     if not vecTable.x or not vecTable.y or not vecTable.z then return nil end
@@ -335,6 +365,7 @@ end
 
 vec3.__type = "vec3"
 
+---@private
 function vec3:__newindex(key, value)
     if (key == "x" or key == "y" or key == "z") and type(value) == "number" then
         rawset(self, key, value)
@@ -343,34 +374,46 @@ function vec3:__newindex(key, value)
     error("Trying to add invalid value to vec3", 2)
 end
 
+---@private
 vec3.__add = vec3.add
+---@private
 vec3.__sub = vec3.sub
+---@private
 vec3.__mul = vec3.multiply
+---@private
 vec3.__div = vec3.divide
+---@private
 vec3.__unm = vec3.negate
+---@private
 vec3.__eq = vec3.equals
 
+---@private
 ---@return string
 function vec3:__tostring()
     return string.format("vec3(%s, %s, %s)", self.x, self.y, self.z)
 end
 
+---@private
 ---@param other vec3
 ---@return boolean
 function vec3:__lt(other)
     return self.x < other.x and self.y < other.y and self.z < other.z
 end
 
+---@private
 ---@param other vec3
 ---@return boolean
 function vec3:__le(other)
     return self.x <= other.x and self.y <= other.y and self.z <= other.z
 end
 
+---@private
+---@return string
 function vec3:__concat(other)
     return tostring(self) .. tostring(other)
 end
 
+---@private
 ---@param x number
 ---@param y number
 ---@param z number

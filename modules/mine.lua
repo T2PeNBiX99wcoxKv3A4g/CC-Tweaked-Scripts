@@ -1,5 +1,6 @@
 local class = require("modules.class")
 local vec3 = require("modules.vector3")
+local angle = require("modules.angle")
 local moveHelper = require("modules.move_helper")
 local fileHelper = require("modules.file_helper")
 local refuelHelper = require("modules.refuel_helper")
@@ -38,8 +39,8 @@ mine.height = 11
 mine.initPos = vec3(0, 0, 0)
 ---@type vec3|nil
 mine.initGPSPos = nil
----@type moveHelper.directions
-mine.initDirection = moveHelper.directions.north
+---@type angle
+mine.initAngle = angle.north()
 ---@type vec3[]
 mine.steps = {}
 ---@type number
@@ -82,11 +83,11 @@ function mine:backToStartPos()
 end
 
 function mine:turnToStartDirection()
-    self.moveHelper:turnTo(self.initDirection)
+    self.moveHelper:turnTo(self.initAngle)
 end
 
 function mine:dropItemToChest()
-    self.moveHelper:turnTo(moveHelper.directions.south)
+    self.moveHelper:turnTo(angle.south())
 
     for i = 1, 16 do
         local item = turtle.getItemDetail(i)
@@ -164,11 +165,11 @@ end
 ---@field length number
 ---@field width number
 ---@field height number
----@field initPos vec3
----@field initDirection moveHelper.directions
----@field position vec3
----@field direction moveHelper.directions
----@field steps vec3[]
+---@field initPos vec3Table
+---@field initAngle angleTable
+---@field position vec3Table
+---@field angle angleTable
+---@field steps vec3Table[]
 ---@field currentStep number
 ---@field currentStatus mine.status
 ---@field currentMode mine.modes
@@ -180,10 +181,10 @@ function mine:save()
         length = self.length,
         width = self.width,
         height = self.height,
-        initPos = self.initPos:copy(),
-        initDirection = self.initDirection,
-        position = self.moveHelper.position:copy(),
-        direction = self.moveHelper.direction,
+        initPos = self.initPos:copy() --[[@as vec3Table]],
+        initAngle = self.initAngle:copy() --[[@as angleTable]],
+        position = self.moveHelper.position:copy() --[[@as vec3Table]],
+        angle = self.moveHelper.angle:copy() --[[@as angleTable]],
         steps = self.steps,
         currentStep = self.currentStep,
         currentStatus = self.currentStatus,
@@ -197,9 +198,9 @@ local dataCheck = {
     "width",
     "height",
     "initPos",
-    "initDirection",
+    "initAngle",
     "position",
-    "direction",
+    "angle",
     "steps",
     "currentStep",
     "currentStatus",
@@ -224,9 +225,9 @@ function mine:load()
     self.width = validData.width
     self.height = validData.height
     self.initPos = vec3.fromTable(validData.initPos) or vec3.zero()
-    self.initDirection = validData.initDirection
+    self.initAngle = angle.fromTable(validData.initAngle) or angle.north()
     self.moveHelper.position = vec3.fromTable(validData.position) or vec3.zero()
-    self.moveHelper.direction = validData.direction
+    self.moveHelper.angle = angle.fromTable(validData.angle) or angle.north()
 
     ---@type vec3[]
     local newSteps = {}
@@ -279,8 +280,8 @@ function mine:broadcastGPSData()
     rednet.broadcast(data, mineGPS.protocol)
 end
 
----@param newDirection moveHelper.directions
-function mine:onDirectionChanged(newDirection)
+---@param newAngle angle
+function mine:onDirectionChanged(newAngle)
     self:save()
     self:broadcastGPSData()
 end
@@ -322,7 +323,7 @@ function mine:init()
         logHelper.massage("Loaded previous state. Resuming mining operation...")
     else
         self.initPos = self.moveHelper.position:copy()
-        self.initDirection = self.moveHelper.direction
+        self.initAngle = self.moveHelper.angle:copy()
 
         term.clear()
         term.setCursorPos(1, 1)

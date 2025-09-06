@@ -1,5 +1,6 @@
 local class = require("modules.class")
 local vec3 = require("modules.vector3")
+local angle = require("modules.angle")
 local moveHelper = require("modules.move_helper")
 local fileHelper = require("modules.file_helper")
 local refuelHelper = require("modules.refuel_helper")
@@ -28,8 +29,8 @@ bridgeBuilder.skipBlocks = {
 
 ---@type vec3
 bridgeBuilder.initPos = vec3(0, 0, 0)
----@type moveHelper.directions
-bridgeBuilder.initDirection = moveHelper.directions.north
+---@type angle
+bridgeBuilder.initAngle = angle.north()
 ---@type vec3 | nil
 bridgeBuilder.progressPosition = nil
 ---@type bridgeBuilder.status
@@ -56,7 +57,7 @@ function bridgeBuilder:backToStartPos()
 end
 
 function bridgeBuilder:turnToStartDirection()
-    self.moveHelper:turnTo(self.initDirection)
+    self.moveHelper:turnTo(self.initAngle)
 end
 
 function bridgeBuilder:backToProgressPosition()
@@ -64,7 +65,7 @@ function bridgeBuilder:backToProgressPosition()
 end
 
 function bridgeBuilder:dropItemToChest()
-    self.moveHelper:turnTo(moveHelper.directions.south)
+    self.moveHelper:turnTo(angle.south())
 
     for i = 1, 16 do
         local item = turtle.getItemDetail(i)
@@ -167,7 +168,7 @@ bridgeBuilder.statusTick = {
     end,
     [bridgeBuilder.status.tempBacking] = function(self)
         self:backToStartPos()
-        self.moveHelper:turnTo(moveHelper.directions.south)
+        self.moveHelper:turnTo(angle.south())
         if self:searchBlockInsideChest() then
             self:turnToStartDirection()
             self:backToProgressPosition()
@@ -212,22 +213,22 @@ function bridgeBuilder:tick()
 end
 
 ---@class bridgeBuilder.save
----@field initPos vec3
----@field initDirection moveHelper.directions
----@field progressPosition vec3|nil
----@field position vec3
----@field direction moveHelper.directions
+---@field initPos vec3Table
+---@field initAngle angleTable
+---@field progressPosition vec3Table|nil
+---@field position vec3Table
+---@field angle angleTable
 ---@field currentStatus bridgeBuilder.status
 
 ---@return boolean
 function bridgeBuilder:save()
     ---@type bridgeBuilder.save
     local data = {
-        initPos = self.initPos:copy(),
-        initDirection = self.initDirection,
-        progressPosition = self.progressPosition and self.progressPosition:copy() or nil,
-        position = self.moveHelper.position:copy(),
-        direction = self.moveHelper.direction,
+        initPos = self.initPos:copy() --[[@as vec3Table]],
+        initAngle = self.initAngle --[[@as angleTable]],
+        progressPosition = self.progressPosition and self.progressPosition:copy() or nil --[[@as vec3Table|nil]],
+        position = self.moveHelper.position:copy() --[[@as vec3Table]],
+        angle = self.moveHelper.angle --[[@as angleTable]],
         currentStatus = self.currentStatus
     }
     return self.saveHelper:save(data)
@@ -235,9 +236,9 @@ end
 
 local dataCheck = {
     "initPos",
-    "initDirection",
+    "initAngle",
     "position",
-    "direction",
+    "angle",
     "currentStatus"
 }
 
@@ -256,10 +257,11 @@ function bridgeBuilder:load()
     local validData = data --[[@as bridgeBuilder.save]]
 
     self.initPos = vec3.fromTable(validData.initPos) or vec3.zero()
-    self.initDirection = validData.initDirection
-    self.progressPosition = validData.progressPosition and vec3.fromTable(validData.progressPosition) or nil
+    self.initAngle = angle(validData.initAngle) --[[@as angle]]
+    self.progressPosition = validData.progressPosition and vec3.fromTable(validData.progressPosition) or
+        nil
     self.moveHelper.position = vec3.fromTable(validData.position) or vec3.zero()
-    self.moveHelper.direction = validData.direction
+    self.moveHelper.angle = angle.fromTable(validData.angle) or angle.north()
     self.currentStatus = validData.currentStatus
 
     return true
@@ -270,8 +272,8 @@ function bridgeBuilder:deleteSave()
     return self.saveHelper:delete()
 end
 
----@param newDirection moveHelper.directions
-function bridgeBuilder:onDirectionChanged(newDirection)
+---@param newAngle angle
+function bridgeBuilder:onDirectionChanged(newAngle)
     self:save()
 end
 
@@ -288,7 +290,7 @@ function bridgeBuilder:init()
         logHelper.massage("Loaded previous state. Resuming building operation...")
     else
         self.initPos = self.moveHelper.position:copy()
-        self.initDirection = self.moveHelper.direction
+        self.initAngle = self.moveHelper.angle:copy()
 
         term.clear()
         term.setCursorPos(1, 1)
