@@ -316,7 +316,7 @@ function protector:init()
     hook.add("moveHelper.onPositionChanged", self, self.onPositionChanged)
 
     ---@diagnostic disable-next-line: param-type-mismatch
-    self.automata = assert(peripheral.find("protective_automata"),
+    self.automata = assert(peripheral.find("protectiveAutomata"),
         "Protective automata is not found! Please install 'Turtlematic' then put protective automata inside") --[[@as turtleMatic.protectiveAutomata]]
 
     if self:load() then
