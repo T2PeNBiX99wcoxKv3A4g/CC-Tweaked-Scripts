@@ -45,7 +45,7 @@ end
 function moveHelper:turnTo(to)
     ---@diagnostic disable-next-line: param-type-mismatch
     expect(1, to, "table")
-    assert(vec3.isVec3(vector), "Invalid angle: " .. to)
+    assert(angle.isAngle(to), "Invalid angle: " .. to)
 
     local turn = self.angle:getQuickTurn(to)
     if turn == angle.turns.left then
