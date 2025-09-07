@@ -41,7 +41,7 @@ function protector:findTarget()
     local relativeVec3 = vec3(lockTarget.z, lockTarget.y, lockTarget.x) --[[@as vec3]]
     relativeVec3 = relativeVec3:round()
     local angle = relativeVec3:angleBetween(self.moveHelper.position:copy())
-    relativeVec3 = relativeVec3:rotateVector(angle)
+    relativeVec3 = relativeVec3:rotateVector(angle):round()
 
     self.lockTargetUuid = lockTarget.uuid
     self.lockTargetVec = self.moveHelper.position + relativeVec3
@@ -165,7 +165,7 @@ function protector:followTarget()
             local relativeVec3 = vec3(value.z, value.y, value.x) --[[@as vec3]]
             relativeVec3 = relativeVec3:round()
             local angle = relativeVec3:angleBetween(self.moveHelper.position:copy())
-            relativeVec3 = relativeVec3:rotateVector(angle)
+            relativeVec3 = relativeVec3:rotateVector(angle):round()
 
             self.lockTargetVec = self.moveHelper.position + relativeVec3
             ret = true
