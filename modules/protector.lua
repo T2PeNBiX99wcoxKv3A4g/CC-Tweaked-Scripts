@@ -181,13 +181,13 @@ function protector:move()
 
     if self.moveHelper.position.y < self.lockTargetVec.y then
         if not self.moveHelper:up() then
-            self:tryFixUp()
+            -- self:tryFixUp()
         end
     end
 
     if self.moveHelper.position.y > self.lockTargetVec.y then
         if not self.moveHelper:down() then
-            self:tryFixDown()
+            -- self:tryFixDown()
         end
     end
 
@@ -211,7 +211,7 @@ function protector:move()
         end
 
         if not self.moveHelper:forward() then
-            self:tryFixForward()
+            -- self:tryFixForward()
         end
     end
 end
