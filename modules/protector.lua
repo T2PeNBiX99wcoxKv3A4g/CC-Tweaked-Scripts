@@ -34,15 +34,19 @@ protector.refuelHelper   = refuelHelper(100, 3000)
 ---@type moveHelper
 protector.moveHelper     = moveHelper(protector)
 
+function protector:resetPos()
+    self.initPos = vec3.zero()
+    self.initAngle = angle.north()
+    self.moveHelper.position = vec3.zero()
+    self.moveHelper.angle = angle.north()
+end
+
 function protector:findTarget()
     local targets = self.automata.scan("entity", 4) --[[@as turtleMatic.scan.output.entity[] ]]
     if #targets < 1 then return end
     local lockTarget = targets[1]
     local relativeVec3 = vec3(lockTarget.z, lockTarget.y, lockTarget.x) --[[@as vec3]]
-    self.initPos = vec3.zero()
-    self.initAngle = angle.north()
-    self.moveHelper.position = vec3.zero()
-    self.moveHelper.angle = angle.north()
+    self:resetPos()
     self.lockTargetUuid = lockTarget.uuid
     self.lockTargetVec = relativeVec3
     logHelper.massage(("Find a Target! Pos: %s, UUID: %s"):format(self.lockTargetVec, self.lockTargetUuid))
@@ -163,11 +167,7 @@ function protector:followTarget()
     for _, value in ipairs(targets) do
         if value.uuid == self.lockTargetUuid then
             local relativeVec3 = vec3(value.z, value.y, value.x) --[[@as vec3]]
-
-            self.initPos = vec3.zero()
-            self.initAngle = angle.north()
-            self.moveHelper.position = vec3.zero()
-            self.moveHelper.angle = angle.north()
+            self:resetPos()
             self.lockTargetVec = relativeVec3
             ret = true
         end
@@ -182,13 +182,13 @@ function protector:move()
 
     if self.moveHelper.position.y < self.lockTargetVec.y then
         if not self.moveHelper:up() then
-            -- self:tryFixUp()
+            self:tryFixUp()
         end
     end
 
     if self.moveHelper.position.y > self.lockTargetVec.y then
         if not self.moveHelper:down() then
-            -- self:tryFixDown()
+            self:tryFixDown()
         end
     end
 
@@ -212,7 +212,7 @@ function protector:move()
         end
 
         if not self.moveHelper:forward() then
-            -- self:tryFixForward()
+            self:tryFixForward()
         end
     end
 end
