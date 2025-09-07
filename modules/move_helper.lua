@@ -18,7 +18,7 @@ moveHelper.mainClass = nil
 ---@return boolean
 function moveHelper:turnLeft()
     if turtle.turnLeft() then
-        self.angle:turnLeft()
+        self.angle = self.angle:turnLeft()
         hook.call("moveHelper.onDirectionChanged", self.angle:copy())
         return true
     end
@@ -28,7 +28,7 @@ end
 ---@return boolean
 function moveHelper:turnRight()
     if turtle.turnRight() then
-        self.angle:turnRight()
+        self.angle = self.angle:turnRight()
         hook.call("moveHelper.onDirectionChanged", self.angle:copy())
         return true
     end
@@ -63,13 +63,13 @@ function moveHelper:forward()
     self.mainClass.refuelHelper:tryRefuel()
     self:dig()
     if turtle.forward() then
-        if self.angle.direction == angle.directions.north then
+        if self.angle == angle.north() then
             self.position = self.position:addZ(1)
-        elseif self.angle.direction == angle.directions.east then
+        elseif self.angle == angle.east() then
             self.position = self.position:addX(1)
-        elseif self.angle.direction == angle.directions.south then
+        elseif self.angle == angle.south() then
             self.position = self.position:addZ(-1)
-        elseif self.angle.direction == angle.directions.west then
+        elseif self.angle == angle.west() then
             self.position = self.position:addX(-1)
         end
         hook.call("moveHelper.onPositionChanged", self.position:copy())
@@ -82,13 +82,13 @@ end
 function moveHelper:back()
     self.mainClass.refuelHelper:tryRefuel()
     if turtle.back() then
-        if self.angle.direction == angle.north() then
+        if self.angle == angle.north() then
             self.position = self.position:addZ(-1)
-        elseif self.angle.direction == angle.directions.east then
+        elseif self.angle == angle.east() then
             self.position = self.position:addX(-1)
-        elseif self.angle.direction == angle.directions.south then
+        elseif self.angle == angle.south() then
             self.position = self.position:addZ(1)
-        elseif self.angle.direction == angle.directions.west then
+        elseif self.angle == angle.west() then
             self.position = self.position:addX(1)
         end
         hook.call("moveHelper.onPositionChanged", self.position:copy())
@@ -144,22 +144,22 @@ function moveHelper:moveTo(vector)
 
     while self.position.x ~= vector.x or self.position.z ~= vector.z do
         if self.position.x < vector.x then
-            while self.angle.direction ~= angle.directions.east do
+            while self.angle ~= angle.east() do
                 if not self:turnTo(angle.east()) then break end
                 sleep(0)
             end
         elseif self.position.x > vector.x then
-            while self.angle.direction ~= angle.directions.west do
+            while self.angle ~= angle.west() do
                 if not self:turnTo(angle.west()) then break end
                 sleep(0)
             end
         elseif self.position.z < vector.z then
-            while self.angle.direction ~= angle.directions.north do
+            while self.angle ~= angle.north() do
                 if not self:turnTo(angle.north()) then break end
                 sleep(0)
             end
         elseif self.position.z > vector.z then
-            while self.angle.direction ~= angle.directions.south do
+            while self.angle ~= angle.south() do
                 if not self:turnTo(angle.south()) then break end
                 sleep(0)
             end

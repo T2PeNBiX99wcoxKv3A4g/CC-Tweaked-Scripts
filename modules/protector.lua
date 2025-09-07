@@ -189,19 +189,19 @@ function protector:move()
 
     if self.moveHelper.position.x ~= self.lockTargetVec.x or self.moveHelper.position.z ~= self.lockTargetVec.z then
         if self.moveHelper.position.x < self.lockTargetVec.x then
-            if self.moveHelper.angle.direction ~= angle.directions.east then
+            if self.moveHelper.angle ~= angle.east() then
                 self.moveHelper:turnTo(angle.east())
             end
         elseif self.moveHelper.position.x > self.lockTargetVec.x then
-            if self.moveHelper.angle.direction ~= angle.directions.west then
+            if self.moveHelper.angle ~= angle.west() then
                 self.moveHelper:turnTo(angle.west())
             end
         elseif self.moveHelper.position.z < self.lockTargetVec.z then
-            if self.moveHelper.angle.direction ~= angle.directions.north then
+            if self.moveHelper.angle ~= angle.north() then
                 self.moveHelper:turnTo(angle.north())
             end
         elseif self.moveHelper.position.z > self.lockTargetVec.z then
-            if self.moveHelper.angle.direction ~= angle.directions.south then
+            if self.moveHelper.angle ~= angle.south() then
                 self.moveHelper:turnTo(angle.south())
             end
         end

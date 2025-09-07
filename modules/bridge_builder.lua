@@ -228,7 +228,7 @@ function bridgeBuilder:save()
         initAngle = self.initAngle --[[@as angleTable]],
         progressPosition = self.progressPosition and self.progressPosition:copy() or nil --[[@as vec3Table|nil]],
         position = self.moveHelper.position:copy() --[[@as vec3Table]],
-        angle = self.moveHelper.angle:copy() --[[@as angleTable]],
+        angle = self.moveHelper.angle --[[@as angleTable]],
         currentStatus = self.currentStatus
     }
     return self.saveHelper:save(data)
