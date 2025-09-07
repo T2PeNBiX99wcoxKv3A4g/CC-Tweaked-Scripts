@@ -48,14 +48,12 @@ function angle:equals(other)
     return self.direction == other.direction
 end
 
----@return angle
 function angle:turnLeft()
-    return angle((self.direction - 1) % 4)
+    self.direction = (self.direction - 1) % 4
 end
 
----@return angle
 function angle:turnRight()
-    return angle((self.direction + 1) % 4)
+    self.direction = (self.direction + 1) % 4
 end
 
 local quickTurn = {
