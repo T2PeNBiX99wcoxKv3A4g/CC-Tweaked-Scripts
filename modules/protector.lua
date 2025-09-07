@@ -316,38 +316,38 @@ function protector:init()
     self.automata = assert(peripheral.find("protectiveAutomata"),
         "Protective automata is not found! Please install 'Turtlematic' then put protective automata inside") --[[@as turtleMatic.protectiveAutomata]]
 
-    if self:load() then
-        logHelper.massage("Loaded previous state. Resuming mining operation...")
+    -- if self:load() then
+    --     logHelper.massage("Loaded previous state. Resuming mining operation...")
 
-        local config = self.dataHelper:load()
+    --     local config = self.dataHelper:load()
 
-        if config and utils.tableKeyCheck(config, configCheck) then
-            local validConfig = config --[[@as protector.config]]
-            self.attackSide = validConfig.attackSide
-        end
+    --     if config and utils.tableKeyCheck(config, configCheck) then
+    --         local validConfig = config --[[@as protector.config]]
+    --         self.attackSide = validConfig.attackSide
+    --     end
+    -- else
+    self.initPos = self.moveHelper.position:copy()
+    self.initAngle = self.moveHelper.angle:copy()
+
+    local config = self.dataHelper:load()
+
+    if config and utils.tableKeyCheck(config, configCheck) then
+        local validConfig = config --[[@as protector.config]]
+        self.attackSide = validConfig.attackSide
     else
-        self.initPos = self.moveHelper.position:copy()
-        self.initAngle = self.moveHelper.angle:copy()
+        ---@type protector.config
+        local configTable = {
+            attackSide = self.attackSide
+        }
 
-        local config = self.dataHelper:load()
-
-        if config and utils.tableKeyCheck(config, configCheck) then
-            local validConfig = config --[[@as protector.config]]
-            self.attackSide = validConfig.attackSide
-        else
-            ---@type protector.config
-            local configTable = {
-                attackSide = self.attackSide
-            }
-
-            self.dataHelper:delete()
-            self.dataHelper:save(configTable)
-        end
-
-        self:save()
-
-        logHelper.massage("Starting new operation...")
+        self.dataHelper:delete()
+        self.dataHelper:save(configTable)
     end
+
+    self:save()
+
+    logHelper.massage("Starting new operation...")
+    -- end
 
     logHelper.title("Protector")
 
