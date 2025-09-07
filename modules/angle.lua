@@ -69,8 +69,8 @@ local quickTurn = {
 ---@return angle.turns
 function angle:getQuickTurn(to)
     local diff = self:getRotationDirection(to)
-    if quickTurn[diff] then
-        return quickTurn[diff]
+    if quickTurn[diff + 1] then
+        return quickTurn[diff + 1]
     end
     return self.turns.none
 end
