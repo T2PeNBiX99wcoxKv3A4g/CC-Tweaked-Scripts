@@ -38,8 +38,8 @@ function protector:findTarget()
     local targets = self.automata.scan("entity", 4) --[[@as turtleMatic.scan.output.entity[] ]]
     if #targets < 1 then return end
     local lockTarget = targets[1]
-    local relativeVec3 = vec3(lockTarget.z, lockTarget.y, lockTarget.x) --[[@as vec3]]:convertRelativeVector(
-        angle.north(), self.moveHelper.angle:copy())
+    local relativeVec3 = vec3(lockTarget.z, lockTarget.y, lockTarget.x) --[[@as vec3]]
+    relativeVec3 = relativeVec3:floor():convertRelativeVector(angle.north(), self.moveHelper.angle:copy())
 
     self.lockTargetUuid = lockTarget.uuid
     self.lockTargetVec = self.moveHelper.position + relativeVec3
@@ -160,8 +160,8 @@ function protector:followTarget()
     local ret = false
     for _, value in ipairs(targets) do
         if value.uuid == self.lockTargetUuid then
-            local relativeVec3 = vec3(value.z, value.y, value.x) --[[@as vec3]]:convertRelativeVector(
-                angle.north(), self.moveHelper.angle:copy())
+            local relativeVec3 = vec3(value.z, value.y, value.x) --[[@as vec3]]
+            relativeVec3 = relativeVec3:floor():convertRelativeVector(angle.north(), self.moveHelper.angle:copy())
 
             self.lockTargetVec = self.moveHelper.position + relativeVec3
             ret = true
