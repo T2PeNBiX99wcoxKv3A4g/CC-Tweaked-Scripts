@@ -57,38 +57,26 @@ function protector:clearTarget()
     self.lockTargetVec = nil
 end
 
-function protector:tryFixForward()
-    if turtle.getFuelLevel() < 1 then return end
-    while true do
-        if turtle.getFuelLevel() < 1 then return end
-        if self.moveHelper:forward() then
-            break
-        end
-        if not self.moveHelper:up() then
-            break
-        end
-        sleep(0)
+---@return boolean
+function protector:tryGoUp()
+    if turtle.getFuelLevel() < 1 then return false end
+    if turtle.detectUp() then return false end
+
+    if not self.moveHelper:forward() then
+        self.moveHelper:up()
     end
-    while true do
-        if turtle.getFuelLevel() < 1 then return end
-        if self.moveHelper:forward() then
-            break
-        end
-        if not self.moveHelper:down() then
-            break
-        end
-        sleep(0)
+    return true
+end
+
+---@return boolean
+function protector:tryGoDown()
+    if turtle.getFuelLevel() < 1 then return false end
+    if turtle.detectDown() then return false end
+
+    if not self.moveHelper:forward() then
+        self.moveHelper:down()
     end
-    while true do
-        if turtle.getFuelLevel() < 1 then return end
-        if self.moveHelper:forward() then
-            break
-        end
-        if not self.moveHelper:turnLeft() then
-            break
-        end
-        sleep(0)
-    end
+    return true
 end
 
 function protector:tryFixUp()
@@ -182,13 +170,13 @@ function protector:move()
 
     if self.moveHelper.position.y < self.lockTargetVec.y then
         if not self.moveHelper:up() then
-            self:tryFixUp()
+            -- self:tryFixUp()
         end
     end
 
     if self.moveHelper.position.y > self.lockTargetVec.y then
         if not self.moveHelper:down() then
-            self:tryFixDown()
+            -- self:tryFixDown()
         end
     end
 
@@ -212,7 +200,9 @@ function protector:move()
         end
 
         if not self.moveHelper:forward() then
-            self:tryFixForward()
+            if not self:tryGoUp() then
+                self:tryGoDown()
+            end
         end
     end
 end
