@@ -21,7 +21,8 @@ local look = {}
 
 ---@param mode turtleMatic.interactionMode
 ---@param direction turtleMatic.direction?
----@return turtleMatic.look.output
+---@return turtleMatic.look.output|nil output
+---@return string|nil errorMessage
 function look.look(mode, direction) return {} end
 
 return look

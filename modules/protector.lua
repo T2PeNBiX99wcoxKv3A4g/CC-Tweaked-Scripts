@@ -213,7 +213,8 @@ function protector:move()
 end
 
 function protector:attack()
-    local lookEntity = self.automata.look("entity")
+    local lookEntity = self.automata.look("entity") --[[@as turtleMatic.look.output.entity|nil]]
+    if not lookEntity then return end
     if lookEntity.uuid ~= self.lockTargetUuid then return end
     turtle.attack()
 end
