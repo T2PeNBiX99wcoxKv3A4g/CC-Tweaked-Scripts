@@ -143,22 +143,24 @@ end
 
 function protector:move()
     if not self.lockTargetVec then return end
-    if self.moveHelper.position == self.lockTargetVec then return end
 
     self:followTarget()
 
+    if self.moveHelper.position == self.lockTargetVec then return end
     if self.moveHelper.position.y < self.lockTargetVec.y then
         if not self.moveHelper:up() and not self:tryGoForwardThenUp() and not self:tryGoBackThenUp() then
             self:clearTarget()
         end
     end
 
+    if self.moveHelper.position == self.lockTargetVec then return end
     if self.moveHelper.position.y > self.lockTargetVec.y then
         if not self.moveHelper:down() and not self:tryGoForwardThenDown() and not self:tryGoBackThenDown() then
             self:clearTarget()
         end
     end
 
+    if self.moveHelper.position == self.lockTargetVec then return end
     if self.moveHelper.position.x ~= self.lockTargetVec.x or self.moveHelper.position.z ~= self.lockTargetVec.z then
         if self.moveHelper.position.x < self.lockTargetVec.x then
             if self.moveHelper.angle ~= angle.east() then
