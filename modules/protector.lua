@@ -142,6 +142,7 @@ function protector:followTarget()
 end
 
 function protector:move()
+    if not self.lockTargetVec then return end
     if self.moveHelper.position == self.lockTargetVec then return end
 
     self:followTarget()
