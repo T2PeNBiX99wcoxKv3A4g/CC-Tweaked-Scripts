@@ -39,7 +39,9 @@ function protector:findTarget()
     if #targets < 1 then return end
     local lockTarget = targets[1]
     local relativeVec3 = vec3(lockTarget.z, lockTarget.y, lockTarget.x) --[[@as vec3]]
-    relativeVec3 = relativeVec3:floor():convertRelativeVector(angle.north(), self.moveHelper.angle:copy())
+    relativeVec3 = relativeVec3:round()
+    local angle = relativeVec3:angleBetween(self.moveHelper.position:copy())
+    relativeVec3 = relativeVec3:rotateVector(angle)
 
     self.lockTargetUuid = lockTarget.uuid
     self.lockTargetVec = self.moveHelper.position + relativeVec3
@@ -161,7 +163,9 @@ function protector:followTarget()
     for _, value in ipairs(targets) do
         if value.uuid == self.lockTargetUuid then
             local relativeVec3 = vec3(value.z, value.y, value.x) --[[@as vec3]]
-            relativeVec3 = relativeVec3:floor():convertRelativeVector(angle.north(), self.moveHelper.angle:copy())
+            relativeVec3 = relativeVec3:round()
+            local angle = relativeVec3:angleBetween(self.moveHelper.position:copy())
+            relativeVec3 = relativeVec3:rotateVector(angle)
 
             self.lockTargetVec = self.moveHelper.position + relativeVec3
             ret = true
