@@ -19,6 +19,8 @@ protector.lockTargetVec  = nil
 protector.lockTargetUuid = nil
 ---@type string
 protector.attackSide     = "right"
+---@type number
+protector.retryTime      = 10
 ---@type vec3
 protector.initPos        = vec3(0, 0, 0)
 ---@type angle
@@ -61,90 +63,66 @@ end
 function protector:tryGoUp()
     if turtle.getFuelLevel() < 1 then return false end
     if turtle.detectUp() then return false end
-
-    if not self.moveHelper:forward() then
+    for i = 0, self.retryTime do
+        if self.moveHelper:forward() then return true end
         self.moveHelper:up()
     end
-    return true
+    return false
 end
 
 ---@return boolean
 function protector:tryGoDown()
     if turtle.getFuelLevel() < 1 then return false end
     if turtle.detectDown() then return false end
-
-    if not self.moveHelper:forward() then
+    for i = 0, self.retryTime do
+        if self.moveHelper:forward() then return true end
         self.moveHelper:down()
     end
-    return true
+    return false
 end
 
-function protector:tryFixUp()
-    if turtle.getFuelLevel() < 1 then return end
-    while true do
-        if turtle.getFuelLevel() < 1 then return end
-        if self.moveHelper:up() then
-            break
-        end
-        if not self.moveHelper:forward() then
-            break
-        end
-        sleep(0)
+---@return boolean
+function protector:tryGoForwardThenUp()
+    if turtle.getFuelLevel() < 1 then return false end
+    if turtle.detectDown() then return false end
+    for i = 0, self.retryTime do
+        if self.moveHelper:up() then return true end
+        self.moveHelper:forward()
     end
-    while true do
-        if turtle.getFuelLevel() < 1 then return end
-        if self.moveHelper:up() then
-            break
-        end
-        if not self.moveHelper:back() then
-            break
-        end
-        sleep(0)
-    end
-    while true do
-        if turtle.getFuelLevel() < 1 then return end
-        if self.moveHelper:up() then
-            break
-        end
-        if not self.moveHelper:turnLeft() and not self.moveHelper:forward() then
-            break
-        end
-        sleep(0)
-    end
+    return false
 end
 
-function protector:tryFixDown()
-    if turtle.getFuelLevel() < 1 then return end
-    while true do
-        if turtle.getFuelLevel() < 1 then return end
-        if self.moveHelper:down() then
-            break
-        end
-        if not self.moveHelper:forward() then
-            break
-        end
-        sleep(0)
+---@return boolean
+function protector:tryGoBackThenUp()
+    if turtle.getFuelLevel() < 1 then return false end
+    if turtle.detectDown() then return false end
+    for i = 0, self.retryTime do
+        if self.moveHelper:up() then return true end
+        self.moveHelper:back()
     end
-    while true do
-        if turtle.getFuelLevel() < 1 then return end
-        if self.moveHelper:down() then
-            break
-        end
-        if not self.moveHelper:back() then
-            break
-        end
-        sleep(0)
+    return false
+end
+
+---@return boolean
+function protector:tryGoForwardThenDown()
+    if turtle.getFuelLevel() < 1 then return false end
+    if turtle.detectDown() then return false end
+    for i = 0, self.retryTime do
+        if self.moveHelper:down() then return true end
+        self.moveHelper:forward()
     end
-    while true do
-        if turtle.getFuelLevel() < 1 then return end
-        if self.moveHelper:down() then
-            break
-        end
-        if not self.moveHelper:turnLeft() and not self.moveHelper:forward() then
-            break
-        end
-        sleep(0)
+    return false
+end
+
+---@return boolean
+function protector:tryGoBackThenDown()
+    if turtle.getFuelLevel() < 1 then return false end
+    if turtle.detectDown() then return false end
+    for i = 0, self.retryTime do
+        if self.moveHelper:down() then return true end
+        self.moveHelper:back()
     end
+    return false
 end
 
 ---@return boolean
@@ -169,14 +147,14 @@ function protector:move()
     self:followTarget()
 
     if self.moveHelper.position.y < self.lockTargetVec.y then
-        if not self.moveHelper:up() then
-            -- self:tryFixUp()
+        if not self.moveHelper:up() and not self:tryGoForwardThenUp() and not self:tryGoBackThenUp() then
+            self:clearTarget()
         end
     end
 
     if self.moveHelper.position.y > self.lockTargetVec.y then
-        if not self.moveHelper:down() then
-            -- self:tryFixDown()
+        if not self.moveHelper:down() and not self:tryGoForwardThenDown() and not self:tryGoBackThenDown() then
+            self:clearTarget()
         end
     end
 
@@ -199,10 +177,8 @@ function protector:move()
             end
         end
 
-        if not self.moveHelper:forward() then
-            if not self:tryGoUp() then
-                self:tryGoDown()
-            end
+        if not self.moveHelper:forward() and not self:tryGoUp() and not self:tryGoDown() then
+            self:clearTarget()
         end
     end
 end
@@ -303,9 +279,11 @@ end
 
 ---@class protector.config
 ---@field attackSide string
+---@field retryTime number
 
 local configCheck = {
-    "attackSide"
+    "attackSide",
+    "retryTime"
 }
 
 function protector:init()
@@ -337,7 +315,8 @@ function protector:init()
     else
         ---@type protector.config
         local configTable = {
-            attackSide = self.attackSide
+            attackSide = self.attackSide,
+            retryTime = self.retryTime
         }
 
         self.dataHelper:delete()
