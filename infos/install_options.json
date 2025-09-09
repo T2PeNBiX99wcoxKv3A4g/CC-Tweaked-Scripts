@@ -50,5 +50,9 @@
     "protector": {
         "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_protector.json",
         "path": "install_protector.json"
+    },
+    "look_logger": {
+        "url": "https://raw.githubusercontent.com/T2PeNBiX99wcoxKv3A4g/CC-Tweaked-Scripts/refs/heads/main/infos/install_look_logger.json",
+        "path": "install_look_logger.json"
     }
 }
