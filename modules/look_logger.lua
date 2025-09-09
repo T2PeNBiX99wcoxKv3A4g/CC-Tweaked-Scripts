@@ -18,12 +18,18 @@ function lookLogger:tick()
     if lookForward then
         print("Found entity data!")
         table.insert(self.foundData, lookForward)
+        self:save()
     end
 
     if lookUp then
         print("Found entity data!")
         table.insert(self.foundData, lookUp)
+        self:save()
     end
+end
+
+function lookLogger:save()
+    self.logHelper:save(self.foundData)
 end
 
 function lookLogger:init()
