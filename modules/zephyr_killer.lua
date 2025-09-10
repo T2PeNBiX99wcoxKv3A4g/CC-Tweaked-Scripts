@@ -22,7 +22,7 @@ zephyrKiller.bow          = nil
 ---@type turtleMatic.automata
 zephyrKiller.automata     = nil
 ---@type refuelHelper
-zephyrKiller.refuelHelper = refuelHelper(100, 10000)
+zephyrKiller.refuelHelper = refuelHelper(600, 10000)
 
 ---@return zephyrKiller.targetSide
 function zephyrKiller:findTarget()
