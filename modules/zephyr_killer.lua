@@ -76,7 +76,7 @@ function zephyrKiller:shoot(targetSide)
     end
 
     if shootFunc[targetSide] then
-        shootFunc[targetSide]()
+        shootFunc[targetSide](self)
     end
 end
 
