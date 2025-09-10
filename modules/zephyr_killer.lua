@@ -78,8 +78,6 @@ function zephyrKiller:shoot(targetSide)
     if shootFunc[targetSide] then
         shootFunc[targetSide]()
     end
-
-    self.bow()
 end
 
 function zephyrKiller:tick()
