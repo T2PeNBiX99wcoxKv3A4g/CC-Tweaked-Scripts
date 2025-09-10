@@ -75,8 +75,6 @@ function zephyrKiller:shoot(targetSide)
         return
     end
 
-    self.refuelHelper:tryRefuel()
-
     if shootFunc[targetSide] then
         shootFunc[targetSide]()
     end
@@ -85,6 +83,8 @@ function zephyrKiller:shoot(targetSide)
 end
 
 function zephyrKiller:tick()
+    self.refuelHelper:tryRefuel()
+
     local targetSide = self:findTarget()
 
     if targetSide ~= self.targetSide.none then
